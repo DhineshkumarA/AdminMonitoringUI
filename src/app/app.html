@@ -1,18 +1,16 @@
 <div class="dashboard">
 
   <!-- INVISIBLE TOP TRIGGER -->
-  <div class="top-hover-zone"></div>
-
-
-  <header class="header">
-
+  <div class="top-hover-zone">
     <div class="top-arrow">
       ⌄ &nbsp; Move Mouse To Top For Menu
     </div>
+  </div>
 
+  <!-- HIDDEN HEADER -->
+  <header class="header">
 
     <div class="header-left">
-
       <div class="header-icon">
         📊
       </div>
@@ -24,9 +22,7 @@
           Angular Component Architecture (Isolated State)
         </span>
       </div>
-
     </div>
-
 
     <div class="header-right">
 
@@ -35,20 +31,29 @@
       </span>
 
       <select class="module-select">
-
-        <option value="label">
-          Label Designer
-        </option>
-
-        <option value="migration">
-          Data Migration
-        </option>
-
+        <option value="label">Label Designer</option>
+        <option value="migration">Data Migration</option>
       </select>
 
     </div>
 
   </header>
+
+
+  <!-- THIS MUST BE OUTSIDE HEADER -->
+  <div class="module-bar">
+
+    <div class="module-title">
+      <span class="module-dot"></span>
+      LABEL DESIGNER MODULE COMPONENT
+    </div>
+
+    <div class="module-status">
+      <span>Designers Online: 41</span>
+      <span>Spool Queue: <strong>HEALTHY</strong></span>
+    </div>
+
+  </div>
 
   <!-- MAIN CONTENT -->
 
@@ -71,7 +76,7 @@
           </span>
 
           <strong>
-            128
+            {{dashboardData?.totalUsers}}
           </strong>
 
           <small>
@@ -81,7 +86,6 @@
         </div>
 
       </div>
-
 
       <div class="summary-card">
 
@@ -96,7 +100,7 @@
           </span>
 
           <strong>
-            356
+            {{dashboardData?.totalTemplates}}
           </strong>
 
           <small>
@@ -121,7 +125,7 @@
           </span>
 
           <strong>
-            12,450
+            {{dashboardData?.printJobs}}
           </strong>
 
           <small>
@@ -146,7 +150,7 @@
           </span>
 
           <strong>
-            84
+            {{dashboardData?.dataImports}}
           </strong>
 
           <small>
@@ -171,7 +175,7 @@
           </span>
 
           <strong>
-            7
+            {{dashboardData?.failedImports}}
           </strong>
 
           <small>
@@ -499,63 +503,25 @@
 
                 </div>
 
-
+                @for (event of selectedUser.usageEvents; track event.time) {
                 <!-- ROW 1 -->
 
-                <div class="events-row">
+                  <div class="events-row">
 
-                  <div class="event-time">
-                    08:45:10
+                    <div class="event-time">
+                      {{event.time}}
+                    </div>
+
+                    <div class="event-action">
+                      {{ event.action }}
+                    </div>
+
+                    <div class="event-json">
+                      {{ event.eventDetails }}
+                    </div>
+
                   </div>
-
-                  <div class="event-action">
-                    CREATE TEMPLATE
-                  </div>
-
-                  <div class="event-json">
-                    &#123; "name": "Pallet Tag 400", "dimensions": "6x8" &#125;
-                  </div>
-
-                </div>
-
-
-                <!-- ROW 2 -->
-
-                <div class="events-row">
-
-                  <div class="event-time">
-                    09:50:44
-                  </div>
-
-                  <div class="event-action">
-                    EXPORT_PRINT
-                  </div>
-
-                  <div class="event-json">
-                    &#123; "format": "ZPL", "copies": 500 &#125;
-                  </div>
-
-                </div>
-
-
-                <!-- ROW 3 -->
-
-                <div class="events-row">
-
-                  <div class="event-time">
-                    11:25:18
-                  </div>
-
-                  <div class="event-action">
-                    UPDATE TEMPLATE
-                  </div>
-
-                  <div class="event-json">
-                    &#123; "templateId": 15, "field": "barcode" &#125;
-                  </div>
-
-                </div>
-
+                }
 
               </div>
 
@@ -585,5 +551,37 @@
     </span>
 
   </footer>
+
+
+  <!-- <div *ngIf="dashboardData">
+
+  <h2>GraphQL Connected</h2>
+
+  <p>
+    Total Users:
+    {{ dashboardData.totalUsers }}
+  </p>
+
+  <p>
+    Total Templates:
+    {{ dashboardData.totalTemplates }}
+  </p>
+
+  <p>
+    Print Jobs:
+    {{ dashboardData.printJobs }}
+  </p>
+
+  <p>
+    Data Imports:
+    {{ dashboardData.dataImports }}
+  </p>
+
+  <p>
+    Failed Imports:
+    {{ dashboardData.failedImports }}
+  </p> -->
+
+<!-- </div> -->
 
 </div>

@@ -1,59 +1,77 @@
-import {Component,AfterViewInit,ChangeDetectorRef} from '@angular/core';
+import {Component,OnInit,AfterViewInit,NgZone,ChangeDetectorRef} from '@angular/core';
 
 import { Chart } from 'chart.js/auto';
+import { DashboardService } from './dashboard.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.html',
   styleUrls: ['./app.css']
 })
-export class App implements AfterViewInit {
+export class App implements OnInit, AfterViewInit {
 
   selectedUser: any = null;
 
+  dashboardData: any = null;
+
   userDetailChart: Chart | null = null;
 
-  constructor( private cdr: ChangeDetectorRef) {}
+  constructor(
+    private zone: NgZone,
+    private dashboardService: DashboardService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
-  users = [
-    {
-      id: 1,
-      name: 'Dhinesh',
-      percentage: 45,
-      templates: 15,
-      printJobs: 920,
-      client: 'Tech Solutions Ltd'
-    },
-    {
-      id: 2,
-      name: 'Arun',
-      percentage: 30,
-      templates: 12,
-      printJobs: 780,
-      client: 'ABC Manufacturing'
-    },
-    {
-      id: 3,
-      name: 'John',
-      percentage: 25,
-      templates: 8,
-      printJobs: 640,
-      client: 'Global Logistics Corp'
-    }
-  ];
+  // Your existing users array
+  users: any[] = [];
 
+  ngOnInit(): void {
+
+    console.log('App initialized');
+
+    this.dashboardService.getDashboard().subscribe({
+
+      next: (response) => {
+
+        console.log('GraphQL Response:', response);
+
+        this.dashboardData = response.data.dashboard;
+
+        this.users = this.dashboardData.userActivity;
+
+        console.log('Dashboard Data:', this.dashboardData);
+        console.log('Total Users:', this.dashboardData.totalUsers);
+        console.log('Users from API:', this.users);
+
+        // Force Angular template update
+        this.cdr.detectChanges();
+
+        setTimeout(() => {
+
+          this.createUserActivityChart();
+
+          this.createCategoryChart();
+
+          this.createWeeklyChart();
+
+        }, 100);
+
+      },
+
+      error: (error) => {
+
+        console.error('GraphQL Error:', error);
+
+      }
+
+    });
+
+  }
 
   ngAfterViewInit(): void {
 
-    setTimeout(() => {
-
-      this.createUserActivityChart();
-
-      this.createCategoryChart();
-
-      this.createWeeklyChart();
-
-    }, 100);
+    // Don't call API here.
+    // Don't create charts here immediately.
 
   }
 
@@ -72,6 +90,13 @@ export class App implements AfterViewInit {
       console.error('userActivityChart canvas not found');
       return;
     }
+
+    if (!this.users || this.users.length === 0) {
+      console.log('No user activity data available');
+      return;
+    }
+
+    console.log('Creating User Activity Chart:', this.users);
 
     const userColors: string[] = [
       '#2563eb',
@@ -182,44 +207,39 @@ export class App implements AfterViewInit {
 
         onClick: (_event, elements) => {
 
-          console.log('PIE CLICKED');
-
           if (!elements || elements.length === 0) {
-
-            console.log('No slice selected');
-
             return;
           }
 
           const index = elements[0].index;
 
-          console.log('Clicked index:', index);
-
           const user = this.users[index];
 
-          console.log('Clicked user:', user);
+          console.log('Clicked User:', user);
 
-          // Set selected user
-          this.selectedUser = user;
+          this.zone.run(() => {
 
-          // Force Angular to update @if(selectedUser)
-          this.cdr.detectChanges();
-
-          console.log(
-            'selectedUser:',
-            this.selectedUser
-          );
-
-          // Wait until popup canvas exists
-          setTimeout(() => {
+            this.selectedUser = user;
 
             console.log(
-              'Creating user detail chart'
+              'selectedUser:',
+              this.selectedUser
             );
 
-            this.createUserDetailChart();
+            this.cdr.detectChanges();
 
-          }, 100);
+            // Wait for popup HTML/canvas to be created
+            setTimeout(() => {
+
+              console.log(
+                'Creating user detail chart'
+              );
+
+              this.createUserDetailChart();
+
+            }, 100);
+
+          });
 
         }
 
@@ -241,7 +261,6 @@ export class App implements AfterViewInit {
         'userDetailChart'
       ) as HTMLCanvasElement | null;
 
-
     if (!canvas) {
 
       console.error(
@@ -249,9 +268,7 @@ export class App implements AfterViewInit {
       );
 
       return;
-
     }
-
 
     // Destroy previous chart
     if (this.userDetailChart) {
@@ -259,28 +276,36 @@ export class App implements AfterViewInit {
       this.userDetailChart.destroy();
 
       this.userDetailChart = null;
-
     }
 
+    // Get hourly activity from API
+    const activity =
+      this.selectedUser?.hourlyActivity;
+
+    if (!activity || activity.length === 0) {
+
+      console.log(
+        'No hourly activity data for selected user'
+      );
+
+      return;
+    }
+
+    console.log(
+      'Hourly Activity:',
+      activity
+    );
 
     this.userDetailChart =
       new Chart(canvas, {
 
         type: 'line',
 
-
         data: {
 
-          labels: [
-            '08:00',
-            '09:00',
-            '10:00',
-            '11:00',
-            '12:00',
-            '13:00',
-            '14:00'
-          ],
-
+          labels: activity.map(
+            (item: any) => item.hour
+          ),
 
           datasets: [
 
@@ -288,16 +313,9 @@ export class App implements AfterViewInit {
 
               label: 'Activity',
 
-              data: [
-                1,
-                3,
-                5,
-                2,
-                8,
-                6,
-                4
-              ],
-
+              data: activity.map(
+                (item: any) => item.count
+              ),
 
               borderColor:
                 '#2563eb',
@@ -310,7 +328,6 @@ export class App implements AfterViewInit {
               tension: 0.4,
 
               fill: true,
-
 
               pointRadius: 4,
 
@@ -330,13 +347,11 @@ export class App implements AfterViewInit {
 
         },
 
-
         options: {
 
           responsive: true,
 
           maintainAspectRatio: false,
-
 
           interaction: {
 
@@ -346,7 +361,6 @@ export class App implements AfterViewInit {
 
           },
 
-
           plugins: {
 
             legend: {
@@ -355,7 +369,6 @@ export class App implements AfterViewInit {
 
             },
 
-
             tooltip: {
 
               enabled: true
@@ -363,7 +376,6 @@ export class App implements AfterViewInit {
             }
 
           },
-
 
           scales: {
 
@@ -384,7 +396,6 @@ export class App implements AfterViewInit {
               }
 
             },
-
 
             y: {
 
@@ -415,9 +426,7 @@ export class App implements AfterViewInit {
         }
 
       });
-
   }
-
 
   // =====================================================
   // CATEGORY CHART
@@ -435,6 +444,14 @@ export class App implements AfterViewInit {
       return;
     }
 
+    const categories =
+      this.dashboardData?.templatesByCategory;
+
+    if (!categories || categories.length === 0) {
+      console.log('No category data');
+      return;
+    }
+
 
     new Chart(canvas, {
 
@@ -443,36 +460,24 @@ export class App implements AfterViewInit {
 
       data: {
 
-        labels: [
-          'Invoice',
-          'Product',
-          'Shipping',
-          'Barcode',
-          'Asset Tag'
-        ],
+        labels: categories.map(
+          (item: any) => item.category
+        ),
+
 
 
         datasets: [
-
           {
-
             label: 'Templates',
 
-            data: [
-              35,
-              22,
-              18,
-              12,
-              8
-            ],
+            data: categories.map(
+              (item: any) => item.count
+            ),
 
-            backgroundColor:
-              '#2563eb',
+            backgroundColor: '#2563eb',
 
             borderRadius: 5
-
           }
-
         ]
 
       },
@@ -484,29 +489,20 @@ export class App implements AfterViewInit {
 
         maintainAspectRatio: false,
 
-
         plugins: {
-
           legend: {
-
             display: false
-
           }
-
         },
 
-
         scales: {
-
           y: {
-
             beginAtZero: true
-
           }
-
         }
 
       }
+
 
     });
 
@@ -529,6 +525,14 @@ export class App implements AfterViewInit {
       return;
     }
 
+    const weeklyData =
+      this.dashboardData?.weeklyPrintActivity;
+
+    if (!weeklyData || weeklyData.length === 0) {
+      console.log('No weekly print data');
+      return;
+    }
+
 
     new Chart(canvas, {
 
@@ -537,36 +541,22 @@ export class App implements AfterViewInit {
 
       data: {
 
-        labels: [
-          'Mon',
-          'Tue',
-          'Wed',
-          'Thu',
-          'Fri',
-          'Sat',
-          'Sun'
-        ],
+        labels: weeklyData.map(
+        (item: any) => item.day
+        ),
 
 
+        
         datasets: [
 
           {
-
             label: 'Print Spool',
 
-            data: [
-              620,
-              880,
-              1200,
-              1450,
-              980,
-              420,
-              300
-            ],
+            data: weeklyData.map(
+              (item: any) => item.printJobs
+            ),
 
-
-            borderColor:
-              '#4f46e5',
+            borderColor: '#4f46e5',
 
             backgroundColor:
               'rgba(79, 70, 229, 0.12)',
@@ -578,7 +568,6 @@ export class App implements AfterViewInit {
             pointRadius: 4,
 
             pointHoverRadius: 8
-
           }
 
         ]
@@ -592,24 +581,18 @@ export class App implements AfterViewInit {
 
         maintainAspectRatio: false,
 
-
         plugins: {
 
           legend: {
-
             display: false
-
           }
 
         },
 
-
         scales: {
 
           y: {
-
             beginAtZero: true
-
           }
 
         }
