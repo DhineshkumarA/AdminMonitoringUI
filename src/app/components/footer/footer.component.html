@@ -1,0 +1,26 @@
+<footer class="footer">
+  <div class="footer-left">
+    <span>Admin Monitoring System</span>
+  </div>
+
+  <div class="footer-right">
+    <button
+      type="button"
+      class="btn-audit btn-csv"
+      (click)="exportAuditCSV()"
+      [disabled]="!dashboardData"
+      title="Download complete audit data in CSV format"
+    >
+      ↓ Export CSV
+    </button>
+    <button
+      type="button"
+      class="btn-audit btn-excel"
+      (click)="exportAuditExcel()"
+      [disabled]="!dashboardData"
+      title="Download complete audit data in Excel format"
+    >
+      ▣ Export Excel
+    </button>
+  </div>
+</footer>

@@ -1,18 +1,29 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { DashboardData, CompanyUser } from './models/dashboard.model';
+
+export interface GraphQLDashboardResponse {
+  data: {
+    dashboard: DashboardData;
+  };
+}
+
+export interface GraphQLCompanyUsersResponse {
+  data: {
+    companyUsers: CompanyUser[];
+  };
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class DashboardService {
-
   private graphqlUrl = 'http://localhost:5069/graphql';
 
   constructor(private http: HttpClient) {}
 
-  getDashboard(): Observable<any> {
-
+  getDashboard(): Observable<GraphQLDashboardResponse> {
     const query = {
       query: `
         query {
@@ -20,8 +31,15 @@ export class DashboardService {
             totalUsers
             totalTemplates
             printJobs
-            dataImports
-            failedImports
+            totalCategories
+            totalCompanies
+
+            companyActivity {
+              companyId
+              companyName
+              userCount
+              printJobs
+            }
 
             userActivity {
               id
@@ -30,10 +48,12 @@ export class DashboardService {
               templates
               printJobs
               client
+
               hourlyActivity {
                 hour
                 count
               }
+
               usageEvents {
                 time
                 action
@@ -55,7 +75,31 @@ export class DashboardService {
       `
     };
 
-    return this.http.post<any>(
+    return this.http.post<GraphQLDashboardResponse>(
+      this.graphqlUrl,
+      query
+    );
+  }
+
+  getCompanyUsers(companyId: string): Observable<GraphQLCompanyUsersResponse> {
+    const query = {
+      query: `
+        query($companyId: String!) {
+          companyUsers(companyId: $companyId) {
+            id
+            name
+            templates
+            printJobs
+            client
+          }
+        }
+      `,
+      variables: {
+        companyId: companyId
+      }
+    };
+
+    return this.http.post<GraphQLCompanyUsersResponse>(
       this.graphqlUrl,
       query
     );

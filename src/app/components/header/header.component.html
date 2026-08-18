@@ -1,0 +1,30 @@
+<div class="header-wrapper">
+  <!-- INVISIBLE TOP TRIGGER ZONE -->
+  <div class="top-hover-zone"></div>
+
+  <!-- EXPANDABLE HEADER -->
+  <header class="header">
+    <div class="header-left">
+      <div class="header-icon">
+        📊
+      </div>
+      <div>
+        <h1>Production Monitoring System</h1>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <span class="module-label">MODULE:</span>
+      <select class="module-select" [value]="selectedModule" (change)="onModuleChange($event)">
+        <option value="label">Label Designer</option>
+        <option value="migration">Data Migration</option>
+      </select>
+    </div>
+
+    <!-- INDICATOR TAB (MOVES DOWN TOGETHER WITH HEADER) -->
+    <div class="top-arrow">
+      <span class="arrow-icon">⌄</span>
+      <span class="arrow-text">Move Mouse To Top For Menu</span>
+    </div>
+  </header>
+</div>

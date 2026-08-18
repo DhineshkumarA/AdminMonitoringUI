@@ -1,0 +1,61 @@
+<div class="summary-grid">
+  <!-- TOTAL USERS -->
+  <div class="summary-card">
+    <div class="card-icon users-icon">
+      👤
+    </div>
+    <div class="card-content">
+      <span class="card-label">Total Users</span>
+      <strong>{{ dashboardData?.totalUsers ?? '—' }}</strong>
+      <small>Active users</small>
+    </div>
+  </div>
+
+  <!-- TOTAL TEMPLATES -->
+  <div class="summary-card">
+    <div class="card-icon template-icon">
+      📄
+    </div>
+    <div class="card-content">
+      <span class="card-label">Total Templates</span>
+      <strong>{{ dashboardData?.totalTemplates ?? '—' }}</strong>
+      <small>Created templates</small>
+    </div>
+  </div>
+
+  <!-- PRINT JOBS -->
+  <div class="summary-card">
+    <div class="card-icon print-icon">
+      🖨️
+    </div>
+    <div class="card-content">
+      <span class="card-label">Print Jobs</span>
+      <strong>{{ dashboardData?.printJobs ?? '—' }}</strong>
+      <small>This month</small>
+    </div>
+  </div>
+
+  <!-- TOTAL CATEGORIES -->
+  <div class="summary-card">
+    <div class="card-icon migration-icon">
+      🗂️
+    </div>
+    <div class="card-content">
+      <span class="card-label">Total Categories</span>
+      <strong>{{ dashboardData?.totalCategories ?? '—' }}</strong>
+      <small>Available categories</small>
+    </div>
+  </div>
+
+  <!-- TOTAL COMPANIES -->
+  <div class="summary-card">
+    <div class="card-icon failed-icon">
+      🏢
+    </div>
+    <div class="card-content">
+      <span class="card-label">Total Companies</span>
+      <strong>{{ dashboardData?.totalCompanies ?? '—' }}</strong>
+      <small>Registered companies</small>
+    </div>
+  </div>
+</div>
