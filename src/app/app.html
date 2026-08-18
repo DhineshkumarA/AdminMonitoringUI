@@ -18,9 +18,6 @@
       <div>
         <h1>Production Monitoring System</h1>
 
-        <span class="subtitle">
-          Angular Component Architecture (Isolated State)
-        </span>
       </div>
     </div>
 
@@ -140,21 +137,21 @@
       <div class="summary-card">
 
         <div class="card-icon migration-icon">
-          ⇅
+          🗂️
         </div>
 
         <div class="card-content">
 
           <span class="card-label">
-            Data Imports
+            Total Categories
           </span>
 
           <strong>
-            {{dashboardData?.dataImports}}
+            {{dashboardData?.totalCategories}}
           </strong>
 
           <small>
-            Migration jobs
+            Available categories
           </small>
 
         </div>
@@ -165,21 +162,21 @@
       <div class="summary-card">
 
         <div class="card-icon failed-icon">
-          !
+          🏢
         </div>
 
         <div class="card-content">
 
           <span class="card-label">
-            Failed Imports
+             Total Companies
           </span>
 
           <strong>
-            {{dashboardData?.failedImports}}
+            {{dashboardData?.totalCompanies}}
           </strong>
 
           <small>
-            Requires attention
+            Registered companies
           </small>
 
         </div>
@@ -200,8 +197,8 @@
 
       <div>
         <h3>
-          ◉ USER ACTIVITY SHARE
-          (CLICK SLICE FOR USER DASHBOARD)
+          ◉ COMPANY ACTIVITY
+          (CLICK SLICE FOR COMPANY USERS)
         </h3>
       </div>
 
@@ -291,7 +288,7 @@
           USER POPUP OVERLAY
       ================================================== -->
 
-      <div class="user-popup-overlay">
+      <div class="user-popup-overlay user-popup-overlay-active">
 
         <!-- =================================================
             USER POPUP
@@ -535,7 +532,134 @@
       </div>
 
     }
+
+    @if (selectedCompany) {
+
+      <div class="user-popup-overlay company-popup-overlay">
+
+        <div class="user-popup">
+
+          <!-- HEADER -->
+
+          <div class="user-popup-header">
+
+            <div class="user-header-left">
+
+              <div class="user-avatar">
+                {{ selectedCompany.companyName.charAt(0) }}
+              </div>
+
+              <div>
+
+                <h2>
+                  {{ selectedCompany.companyName }}
+                </h2>
+
+                <p>
+                  Users: {{ selectedCompany.userCount }}
+                  &nbsp; | &nbsp;
+                  Print Jobs: {{ selectedCompany.printJobs }}
+                </p>
+
+              </div>
+
+            </div>
+
+            <div class="popup-actions">
+
+              <button
+                type="button"
+                class="popup-close"
+                (click)="closeCompanyPopup()"
+              >
+                ×
+              </button>
+
+            </div>
+
+          </div>
+
+
+          <!-- COMPANY USERS -->
+
+          <div class="popup-body">
+
+            <div class="popup-section">
+
+              <h3>
+                COMPANY USERS
+              </h3>
+
+
+              <div class="events-table">
+
+                <!-- HEADER -->
+
+                <div class="events-row events-header">
+
+                  <div>
+                    USER
+                  </div>
+
+                  <div>
+                    TEMPLATES
+                  </div>
+
+                  <div>
+                    PRINT JOBS
+                  </div>
+
+                </div>
+
+
+                <!-- USERS -->
+
+                @for (user of companyUsers; track user.id) {
+
+                  <div
+                    class="events-row company-user-row"
+                    (click)="selectCompanyUser(user)"
+                  >
+
+                    <div class="event-time">
+                      {{ user.name || 'Unknown User' }}
+                    </div>
+
+                    <div>
+                      {{ user.templates }}
+                    </div>
+
+                    <div>
+                      {{ user.printJobs }}
+                    </div>
+
+                  </div>
+
+                }
+
+              </div>
+
+
+              @if (companyUsers.length === 0) {
+
+                <div class="no-data">
+                  No users found for this company.
+                </div>
+
+              }
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    }
   </main>
+
+
 
 
   <!-- FOOTER -->
@@ -547,7 +671,7 @@
     </span>
 
     <span>
-      Angular Dashboard
+      LB Dashboard
     </span>
 
   </footer>

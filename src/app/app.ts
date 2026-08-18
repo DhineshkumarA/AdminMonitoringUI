@@ -12,6 +12,9 @@ export class App implements OnInit, AfterViewInit {
 
   selectedUser: any = null;
 
+  selectedCompany: any = null;
+  companyUsers: any[] = [];
+
   dashboardData: any = null;
 
   userDetailChart: Chart | null = null;
@@ -48,7 +51,7 @@ export class App implements OnInit, AfterViewInit {
 
         setTimeout(() => {
 
-          this.createUserActivityChart();
+          this.createCompanyActivityChart();
 
           this.createCategoryChart();
 
@@ -80,7 +83,7 @@ export class App implements OnInit, AfterViewInit {
   // USER ACTIVITY DOUGHNUT
   // =====================================================
 
-  createUserActivityChart(): void {
+  createCompanyActivityChart(): void {
 
     const canvas = document.getElementById(
       'userActivityChart'
@@ -91,17 +94,22 @@ export class App implements OnInit, AfterViewInit {
       return;
     }
 
-    if (!this.users || this.users.length === 0) {
-      console.log('No user activity data available');
+    const companies = this.dashboardData?.companyActivity;
+
+    if (!companies || companies.length === 0) {
+      console.log('No company activity data available');
       return;
     }
 
-    console.log('Creating User Activity Chart:', this.users);
+    console.log('Creating Company Activity Chart:', companies);
 
-    const userColors: string[] = [
+    const companyColors: string[] = [
       '#2563eb',
       '#6366f1',
-      '#0d9488'
+      '#0d9488',
+      '#94a3b8',
+      '#f59e0b',
+      '#ef4444'
     ];
 
     new Chart(canvas, {
@@ -110,17 +118,17 @@ export class App implements OnInit, AfterViewInit {
 
       data: {
 
-        labels: this.users.map(
-          user => user.name
+        labels: companies.map(
+          (company: any) => company.companyName
         ),
 
         datasets: [
           {
-            data: this.users.map(
-              user => user.percentage
+            data: companies.map(
+              (company: any) => company.printJobs
             ),
 
-            backgroundColor: userColors,
+            backgroundColor: companyColors,
 
             borderColor: '#ffffff',
 
@@ -152,15 +160,16 @@ export class App implements OnInit, AfterViewInit {
 
               generateLabels: () => {
 
-                return this.users.map(
-                  (user, index) => {
+                return companies.map(
+                  (company: any, index: number) => {
 
                     return {
+
                       text:
-                        `${user.name} (${user.percentage}%)`,
+                        `${company.companyName} (${company.printJobs})`,
 
                       fillStyle:
-                        userColors[index],
+                        companyColors[index % companyColors.length],
 
                       strokeStyle:
                         '#ffffff',
@@ -187,10 +196,10 @@ export class App implements OnInit, AfterViewInit {
 
               label: (context) => {
 
-                const user =
-                  this.users[context.dataIndex];
+                const company =
+                  companies[context.dataIndex];
 
-                return `${user.name}: ${user.percentage}%`;
+                return `${company.companyName}: ${company.printJobs} print jobs`;
               }
             }
           }
@@ -213,31 +222,15 @@ export class App implements OnInit, AfterViewInit {
 
           const index = elements[0].index;
 
-          const user = this.users[index];
+          const company = companies[index];
 
-          console.log('Clicked User:', user);
+          console.log('Clicked Company:', company);
 
           this.zone.run(() => {
 
-            this.selectedUser = user;
+            this.selectedCompany = company;
 
-            console.log(
-              'selectedUser:',
-              this.selectedUser
-            );
-
-            this.cdr.detectChanges();
-
-            // Wait for popup HTML/canvas to be created
-            setTimeout(() => {
-
-              console.log(
-                'Creating user detail chart'
-              );
-
-              this.createUserDetailChart();
-
-            }, 100);
+            this.loadCompanyUsers(company.companyId);
 
           });
 
@@ -246,7 +239,46 @@ export class App implements OnInit, AfterViewInit {
       }
 
     });
+  }
 
+
+  loadCompanyUsers(companyId: string): void {
+
+    console.log('Loading users for company:', companyId);
+
+    this.dashboardService
+      .getCompanyUsers(companyId)
+      .subscribe({
+
+        next: (response) => {
+
+          console.log(
+            'Company Users Response:',
+            response
+          );
+
+          this.companyUsers =
+            response.data.companyUsers;
+
+          console.log(
+            'Company Users:',
+            this.companyUsers
+          );
+
+          this.cdr.detectChanges();
+
+        },
+
+        error: (error) => {
+
+          console.error(
+            'Company Users Error:',
+            error
+          );
+
+        }
+
+      });
   }
 
 
@@ -426,6 +458,79 @@ export class App implements OnInit, AfterViewInit {
         }
 
       });
+  }
+
+  closeCompanyPopup(): void {
+
+    this.selectedCompany = null;
+
+    this.companyUsers = [];
+
+  }
+
+  selectCompanyUser(user: any): void {
+
+  console.log('Selected Company User:', user);
+
+  // Call backend using selected user's ID
+  this.dashboardService
+    .getUserActivity(user.id)
+    .subscribe({
+
+      next: (response) => {
+
+        console.log(
+          'User Activity Response:',
+          response
+        );
+
+        const activity =
+          response?.data?.userActivity;
+
+        if (!activity) {
+
+          console.error(
+            'User activity not found:',
+            user.id
+          );
+
+          return;
+        }
+
+        console.log(
+          'Loaded User Activity:',
+          activity
+        );
+
+        this.zone.run(() => {
+
+          // Put backend result into popup
+          this.selectedUser = activity;
+
+          this.cdr.detectChanges();
+
+          // Wait for popup HTML to appear
+          setTimeout(() => {
+
+            this.createUserDetailChart();
+
+          }, 100);
+
+        });
+
+      },
+
+      error: (error) => {
+
+        console.error(
+          'User Activity GraphQL Error:',
+          error
+        );
+
+      }
+
+    });
+
   }
 
   // =====================================================
@@ -618,8 +723,15 @@ export class App implements OnInit, AfterViewInit {
 
     }
 
-
     this.selectedUser = null;
+
+
+  }
+
+  closeCompanyUsers(): void {
+
+    this.selectedCompany = null;
+    this.companyUsers = [];
 
   }
 

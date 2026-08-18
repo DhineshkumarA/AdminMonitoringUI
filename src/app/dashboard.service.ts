@@ -20,8 +20,15 @@ export class DashboardService {
             totalUsers
             totalTemplates
             printJobs
-            dataImports
-            failedImports
+            totalCategories
+            totalCompanies
+
+            companyActivity {
+              companyId
+              companyName
+              userCount
+              printJobs
+            }
 
             userActivity {
               id
@@ -30,10 +37,12 @@ export class DashboardService {
               templates
               printJobs
               client
+
               hourlyActivity {
                 hour
                 count
               }
+
               usageEvents {
                 time
                 action
@@ -49,6 +58,65 @@ export class DashboardService {
             weeklyPrintActivity {
               day
               printJobs
+            }
+          }
+        }
+      `
+    };
+
+    return this.http.post<any>(
+      this.graphqlUrl,
+      query
+    );
+  }
+
+  getCompanyUsers(companyId: string): Observable<any> {
+
+    const query = {
+      query: `
+        query($companyId: String!) {
+          companyUsers(companyId: $companyId) {
+            id
+            name
+            templates
+            printJobs
+            client
+          }
+        }
+      `,
+      variables: {
+        companyId: companyId
+      }
+    };
+
+    return this.http.post<any>(
+      this.graphqlUrl,
+      query
+    );
+  }
+
+  getUserActivity(userId: number): Observable<any> {
+
+    const query = {
+      query: `
+        query {
+          userActivity(userId: ${userId}) {
+            id
+            name
+            percentage
+            templates
+            printJobs
+            client
+
+            hourlyActivity {
+              hour
+              count
+            }
+
+            usageEvents {
+              time
+              action
+              eventDetails
             }
           }
         }
