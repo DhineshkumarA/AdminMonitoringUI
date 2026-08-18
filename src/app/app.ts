@@ -724,6 +724,7 @@ export class App implements OnInit, AfterViewInit {
     }
 
     this.selectedUser = null;
+    
 
 
   }
