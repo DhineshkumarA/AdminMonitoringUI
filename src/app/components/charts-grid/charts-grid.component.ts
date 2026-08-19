@@ -38,12 +38,28 @@ export class ChartsGridComponent implements AfterViewInit, OnChanges, OnDestroy 
   private isViewInitialized: boolean = false;
 
   private readonly companyColors: string[] = [
-    '#2563eb',
-    '#6366f1',
-    '#0d9488',
-    '#94a3b8',
-    '#f59e0b',
-    '#ef4444'
+    '#be185d',
+    '#8b5cf6',
+    '#ec4899',
+    '#9f1239',
+    '#a21caf',
+    '#d946ef'
+  ];
+
+  private readonly categoryColors: string[] = [
+    '#be185d', // Berry Magenta
+    '#e11d48', // Rose Red
+    '#9f1239', // Deep Wine
+    '#ec4899', // Hot Pink
+    '#d946ef', // Fuchsia
+    '#f43f5e', // Coral Rose
+    '#831843', // Dark Plum
+    '#fb7185', // Soft Rose
+    '#a21caf', // Purple Magenta
+    '#c026d3', // Violet Orchid
+    '#fda4af', // Blush Rose
+    '#9d174d', // Rich Berry
+    '#f472b6'  // Pastel Pink
   ];
 
   constructor(private zone: NgZone) {}
@@ -200,7 +216,8 @@ export class ChartsGridComponent implements AfterViewInit, OnChanges, OnDestroy 
           {
             label: 'Templates',
             data: categories.map((item) => item.count),
-            backgroundColor: '#2563eb',
+            backgroundColor: categories.map((_, i) => this.categoryColors[i % this.categoryColors.length]),
+            hoverBackgroundColor: categories.map((_, i) => '#831843'),
             borderRadius: 5,
             minBarLength: 4
           }
@@ -313,12 +330,14 @@ export class ChartsGridComponent implements AfterViewInit, OnChanges, OnDestroy 
           {
             label: 'Print Spool',
             data: sortedData,
-            borderColor: '#4f46e5',
-            backgroundColor: 'rgba(79, 70, 229, 0.12)',
+            borderColor: '#9f1239',
+            backgroundColor: 'rgba(190, 24, 93, 0.12)',
             tension: 0.4,
             fill: true,
             pointRadius: 4,
-            pointHoverRadius: 8
+            pointHoverRadius: 8,
+            pointBackgroundColor: '#ffffff',
+            pointBorderColor: '#9f1239'
           }
         ]
       },

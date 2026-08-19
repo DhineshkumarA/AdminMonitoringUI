@@ -88,15 +88,15 @@ export class UserDetailModalComponent implements AfterViewInit, OnChanges, OnDes
           {
             label: 'Activity',
             data: activity.map((item) => item.count),
-            borderColor: '#2563eb',
-            backgroundColor: 'rgba(37, 99, 235, 0.12)',
+            borderColor: '#be185d',
+            backgroundColor: 'rgba(190, 24, 93, 0.12)',
             borderWidth: 3,
             tension: 0.4,
             fill: true,
             pointRadius: 4,
             pointHoverRadius: 7,
             pointBackgroundColor: '#ffffff',
-            pointBorderColor: '#2563eb',
+            pointBorderColor: '#be185d',
             pointBorderWidth: 2
           }
         ]

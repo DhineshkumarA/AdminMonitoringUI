@@ -10,7 +10,7 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  background: #f5f7fb;
+  background: linear-gradient(135deg, #fff1f2 0%, #fdf2f8 50%, #fce7f3 100%);
 }
 
 .main-content {

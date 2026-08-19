@@ -14,19 +14,21 @@
 
 .summary-card {
   background: #ffffff;
-  border: 1px solid #dbe3ef;
+  border: 1px solid #fbcfe8;
   border-radius: 12px;
   padding: 12px 14px;
   display: flex;
   align-items: center;
   gap: 12px;
   min-width: 0;
+  box-shadow: 0 4px 14px rgba(190, 24, 93, 0.04);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .summary-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 22px rgba(190, 24, 93, 0.12);
+  border-color: #f472b6;
 }
 
 .card-icon {
@@ -41,23 +43,23 @@
 }
 
 .users-icon {
-  background: #e8f0ff;
+  background: #fce7f3;
 }
 
 .template-icon {
-  background: #f0eaff;
+  background: #f3e8ff;
 }
 
 .print-icon {
-  background: #e6f7f4;
+  background: #ffe4e6;
 }
 
 .migration-icon {
-  background: #fff3df;
+  background: #fdf2f8;
 }
 
 .failed-icon {
-  background: #ffe8e8;
+  background: #fae8ff;
 }
 
 .card-content {
@@ -68,7 +70,8 @@
 
 .card-label {
   font-size: 11px;
-  color: #6b7280;
+  color: #831843;
+  font-weight: 600;
   margin-bottom: 4px;
   white-space: nowrap;
   overflow: hidden;
@@ -77,7 +80,7 @@
 
 .card-content strong {
   font-size: 23px;
-  color: #111827;
+  color: #1e1b4b;
   line-height: 1.1;
 }
 
