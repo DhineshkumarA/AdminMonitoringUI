@@ -25,6 +25,7 @@ import { CompanyActivity, DashboardData } from '../../models/dashboard.model';
 export class ChartsGridComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() dashboardData: DashboardData | null = null;
   @Output() companyClick = new EventEmitter<CompanyActivity>();
+  @Output() categoryClick = new EventEmitter<string>();
 
   @ViewChild('userActivityChartRef') userActivityChartRef!: ElementRef<HTMLCanvasElement>;
   @ViewChild('categoryChartRef') categoryChartRef!: ElementRef<HTMLCanvasElement>;
@@ -200,21 +201,71 @@ export class ChartsGridComponent implements AfterViewInit, OnChanges, OnDestroy 
             label: 'Templates',
             data: categories.map((item) => item.count),
             backgroundColor: '#2563eb',
-            borderRadius: 5
+            borderRadius: 5,
+            minBarLength: 4
           }
         ]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        interaction: {
+          mode: 'index',
+          intersect: false
+        },
         plugins: {
           legend: {
             display: false
+          },
+          tooltip: {
+            enabled: true,
+            callbacks: {
+              label: (context) => ` ${context.parsed.y} templates`
+            }
           }
         },
         scales: {
+          x: {
+            ticks: {
+              autoSkip: false,
+              maxRotation: 45,
+              minRotation: 35,
+              font: {
+                size: 9.5
+              },
+              color: '#475569',
+              callback: function(val) {
+                const label = this.getLabelForValue(val as number) || '';
+                return label.length > 14 ? label.substring(0, 12) + '…' : label;
+              }
+            },
+            grid: {
+              display: false
+            }
+          },
           y: {
-            beginAtZero: true
+            beginAtZero: true,
+            ticks: {
+              color: '#475569'
+            },
+            grid: {
+              color: '#f1f5f9'
+            }
+          }
+        },
+        onHover: (_event, elements) => {
+          canvas.style.cursor = elements.length > 0 ? 'pointer' : 'default';
+        },
+        onClick: (_event, elements) => {
+          if (!elements || elements.length === 0) {
+            return;
+          }
+          const index = elements[0].index;
+          const category = categories[index]?.category;
+          if (category) {
+            this.zone.run(() => {
+              this.categoryClick.emit(category);
+            });
           }
         }
       }
@@ -240,14 +291,28 @@ export class ChartsGridComponent implements AfterViewInit, OnChanges, OnDestroy 
       return;
     }
 
+    const daysOrder = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    const dataMap = new Map<string, number>();
+    weeklyData.forEach((item) => {
+      dataMap.set(item.day.toLowerCase(), item.printJobs);
+    });
+
+    const sortedLabels: string[] = [];
+    const sortedData: number[] = [];
+
+    daysOrder.forEach((day) => {
+      sortedLabels.push(day);
+      sortedData.push(dataMap.get(day.toLowerCase()) ?? 0);
+    });
+
     this.weeklyChart = new Chart(canvas, {
       type: 'line',
       data: {
-        labels: weeklyData.map((item) => item.day),
+        labels: sortedLabels,
         datasets: [
           {
             label: 'Print Spool',
-            data: weeklyData.map((item) => item.printJobs),
+            data: sortedData,
             borderColor: '#4f46e5',
             backgroundColor: 'rgba(79, 70, 229, 0.12)',
             tension: 0.4,
@@ -260,6 +325,10 @@ export class ChartsGridComponent implements AfterViewInit, OnChanges, OnDestroy 
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        interaction: {
+          mode: 'index',
+          intersect: false
+        },
         plugins: {
           legend: {
             display: false

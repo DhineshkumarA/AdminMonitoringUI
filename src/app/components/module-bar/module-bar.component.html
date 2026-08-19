@@ -5,7 +5,17 @@
   </div>
 
   <div class="module-status">
-    <span>Designers Online: {{ designersOnline }}</span>
-    <span>Spool Queue: <strong>{{ spoolQueueStatus }}</strong></span>
+    <span class="status-item online-status">
+      <span class="pulse-dot"></span>
+      Designers Online: <strong>{{ designersOnline }}</strong>
+    </span>
+    <span class="status-item spool-status">
+      Spool Queue:
+      <strong
+        [class.status-healthy]="spoolQueueStatus === 'HEALTHY'"
+        [class.status-warning]="spoolQueueStatus === 'WARNING'"
+        [class.status-critical]="spoolQueueStatus === 'CRITICAL'"
+      >{{ spoolQueueStatus }}</strong>
+    </span>
   </div>
 </div>

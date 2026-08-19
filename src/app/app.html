@@ -1,6 +1,9 @@
 <div class="dashboard">
   <app-header></app-header>
-  <app-module-bar></app-module-bar>
+  <app-module-bar
+    [designersOnline]="dashboardData?.designersOnline ?? 0"
+    [spoolQueueStatus]="dashboardData?.spoolQueueStatus ?? 'HEALTHY'"
+  ></app-module-bar>
 
   <main class="main-content">
     <app-summary-cards [dashboardData]="dashboardData"></app-summary-cards>
@@ -8,6 +11,7 @@
     <app-charts-grid
       [dashboardData]="dashboardData"
       (companyClick)="onCompanySelected($event)"
+      (categoryClick)="onCategorySelected($event)"
     ></app-charts-grid>
 
     @if (selectedCompany) {
@@ -18,6 +22,26 @@
         (close)="closeCompanyModal()"
         (userSelect)="onCompanyUserSelected($event)"
       ></app-company-users-modal>
+    }
+
+    @if (selectedCategoryName) {
+      <app-category-templates-modal
+        [categoryName]="selectedCategoryName"
+        [templates]="categoryTemplates"
+        [isLoading]="isLoadingCategoryTemplates"
+        (close)="closeCategoryModal()"
+        (templateSelect)="onTemplateSelected($event)"
+      ></app-category-templates-modal>
+    }
+
+    @if (selectedTemplate) {
+      <app-template-labels-modal
+        [template]="selectedTemplate"
+        [labels]="templateLabels"
+        [isLoading]="isLoadingTemplateLabels"
+        (close)="closeTemplateLabelsModal()"
+        (userSelect)="onLabelUserSelected($event)"
+      ></app-template-labels-modal>
     }
 
     @if (selectedUser) {

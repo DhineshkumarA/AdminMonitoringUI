@@ -43,6 +43,8 @@ export interface DashboardData {
   printJobs: number;
   totalCategories: number;
   totalCompanies: number;
+  designersOnline?: number;
+  spoolQueueStatus?: string;
   companyActivity: CompanyActivity[];
   userActivity: UserActivity[];
   templatesByCategory: TemplatesByCategory[];
@@ -55,4 +57,35 @@ export interface CompanyUser {
   templates: number;
   printJobs: number;
   client: string;
+}
+
+export interface CategoryTemplate {
+  id: string;
+  name: string;
+  paperSize: string;
+  orientation: string;
+  version?: number;
+  width?: number;
+  height?: number;
+  stable?: number;
+  lockTemplate?: number;
+  dateStamp?: string;
+  printJobs: number;
+  author: string;
+}
+
+export interface TemplateLabel {
+  id: number;
+  labelId: string;
+  product: string;
+  hostName: string;
+  status?: number;
+  remarks: string;
+  priority?: number;
+  dateStamp?: string;
+  userId: string;
+  userName: string;
+  userEmail: string;
+  companyName: string;
+  companyEmail: string;
 }

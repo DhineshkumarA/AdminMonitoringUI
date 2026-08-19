@@ -10,6 +10,6 @@ import { CommonModule } from '@angular/common';
 })
 export class ModuleBarComponent {
   @Input() moduleTitle: string = 'LABEL DESIGNER MODULE COMPONENT';
-  @Input() designersOnline: number = 41;
+  @Input() designersOnline: number = 0;
   @Input() spoolQueueStatus: string = 'HEALTHY';
 }
