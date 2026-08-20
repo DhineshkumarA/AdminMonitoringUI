@@ -1,56 +1,126 @@
 <div class="dashboard">
-  <app-header></app-header>
-  <app-module-bar
-    [designersOnline]="dashboardData?.designersOnline ?? 0"
-    [spoolQueueStatus]="dashboardData?.spoolQueueStatus ?? 'HEALTHY'"
-  ></app-module-bar>
+  <app-header
+    [selectedModule]="currentModule"
+    (moduleChange)="onModuleChange($event)"
+  ></app-header>
 
-  <main class="main-content">
-    <app-summary-cards [dashboardData]="dashboardData"></app-summary-cards>
+  <!-- ========================================== -->
+  <!-- 🏷️ LABEL DESIGNER MODULE (DEFAULT VIEW)   -->
+  <!-- ========================================== -->
+  @if (currentModule === 'label') {
+    <app-module-bar
+      [designersOnline]="dashboardData?.designersOnline ?? 0"
+      [spoolQueueStatus]="dashboardData?.spoolQueueStatus ?? 'HEALTHY'"
+    ></app-module-bar>
 
-    <app-charts-grid
+    <main class="main-content">
+      <app-summary-cards [dashboardData]="dashboardData"></app-summary-cards>
+
+      <app-charts-grid
+        [dashboardData]="dashboardData"
+        (companyClick)="onCompanySelected($event)"
+        (categoryClick)="onCategorySelected($event)"
+      ></app-charts-grid>
+
+      @if (selectedCompany) {
+        <app-company-users-modal
+          [company]="selectedCompany"
+          [users]="companyUsers"
+          [isLoading]="isLoadingCompanyUsers"
+          (close)="closeCompanyModal()"
+          (userSelect)="onCompanyUserSelected($event)"
+        ></app-company-users-modal>
+      }
+
+      @if (selectedCategoryName) {
+        <app-category-templates-modal
+          [categoryName]="selectedCategoryName"
+          [templates]="categoryTemplates"
+          [isLoading]="isLoadingCategoryTemplates"
+          (close)="closeCategoryModal()"
+          (templateSelect)="onTemplateSelected($event)"
+        ></app-category-templates-modal>
+      }
+
+      @if (selectedTemplate) {
+        <app-template-labels-modal
+          [template]="selectedTemplate"
+          [labels]="templateLabels"
+          [isLoading]="isLoadingTemplateLabels"
+          (close)="closeTemplateLabelsModal()"
+          (userSelect)="onLabelUserSelected($event)"
+        ></app-template-labels-modal>
+      }
+
+      @if (selectedUser) {
+        <app-user-detail-modal
+          [user]="selectedUser"
+          (close)="closeUserModal()"
+        ></app-user-detail-modal>
+      }
+    </main>
+
+    <app-footer
+      [currentModule]="'label'"
       [dashboardData]="dashboardData"
-      (companyClick)="onCompanySelected($event)"
-      (categoryClick)="onCategorySelected($event)"
-    ></app-charts-grid>
+    ></app-footer>
+  }
 
-    @if (selectedCompany) {
-      <app-company-users-modal
-        [company]="selectedCompany"
-        [users]="companyUsers"
-        [isLoading]="isLoadingCompanyUsers"
-        (close)="closeCompanyModal()"
-        (userSelect)="onCompanyUserSelected($event)"
-      ></app-company-users-modal>
-    }
+  <!-- ========================================== -->
+  <!-- 🔄 DATA MIGRATION MODULE (INTERACTIVE)     -->
+  <!-- ========================================== -->
+  @if (currentModule === 'migration') {
+    <app-migration-module-bar
+      [activePipelines]="migrationDashboardData?.activePipelines ?? 0"
+      [queueStatus]="migrationDashboardData?.queueStatus ?? 'HEALTHY'"
+      [successRate]="migrationDashboardData?.successRate ?? 100"
+    ></app-migration-module-bar>
 
-    @if (selectedCategoryName) {
-      <app-category-templates-modal
-        [categoryName]="selectedCategoryName"
-        [templates]="categoryTemplates"
-        [isLoading]="isLoadingCategoryTemplates"
-        (close)="closeCategoryModal()"
-        (templateSelect)="onTemplateSelected($event)"
-      ></app-category-templates-modal>
-    }
+    <main class="main-content">
+      <app-migration-summary-cards
+        [dashboardData]="migrationDashboardData"
+      ></app-migration-summary-cards>
 
-    @if (selectedTemplate) {
-      <app-template-labels-modal
-        [template]="selectedTemplate"
-        [labels]="templateLabels"
-        [isLoading]="isLoadingTemplateLabels"
-        (close)="closeTemplateLabelsModal()"
-        (userSelect)="onLabelUserSelected($event)"
-      ></app-template-labels-modal>
-    }
+      <app-migration-charts-grid
+        [dashboardData]="migrationDashboardData"
+        (statusClick)="onStatusSelected($event)"
+        (companyClick)="onCompanyMigrationSelected($event)"
+      ></app-migration-charts-grid>
 
-    @if (selectedUser) {
-      <app-user-detail-modal
-        [user]="selectedUser"
-        (close)="closeUserModal()"
-      ></app-user-detail-modal>
-    }
-  </main>
+      <!-- STATUS DRILLDOWN MODAL (Click Donut Slice) -->
+      @if (selectedStatusName) {
+        <app-status-migrations-modal
+          [statusName]="selectedStatusName"
+          [jobs]="selectedStatusJobs"
+          (close)="closeStatusModal()"
+          (jobSelect)="onMigrationJobSelected($event)"
+        ></app-status-migrations-modal>
+      }
 
-  <app-footer [dashboardData]="dashboardData"></app-footer>
+      <!-- COMPANY DRILLDOWN MODAL (Click Bar) -->
+      @if (selectedCompanyMigrationName) {
+        <app-company-migrations-modal
+          [companyName]="selectedCompanyMigrationName"
+          [jobs]="selectedCompanyJobs"
+          (close)="closeCompanyMigrationModal()"
+          (jobSelect)="onMigrationJobSelected($event)"
+        ></app-company-migrations-modal>
+      }
+
+      <!-- RUN HISTORY / TELEMETRY MODAL -->
+      @if (selectedMigrationJob) {
+        <app-migration-history-modal
+          [job]="selectedMigrationJob"
+          [histories]="migrationHistories"
+          [isLoading]="isLoadingMigrationHistories"
+          (close)="closeMigrationHistoryModal()"
+        ></app-migration-history-modal>
+      }
+    </main>
+
+    <app-footer
+      [currentModule]="'migration'"
+      [migrationDashboardData]="migrationDashboardData"
+    ></app-footer>
+  }
 </div>

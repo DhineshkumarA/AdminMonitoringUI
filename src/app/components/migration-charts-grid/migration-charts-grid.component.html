@@ -1,0 +1,45 @@
+<div class="chart-grid">
+  <!-- LEFT: STATUS DISTRIBUTION -->
+  <section class="chart-card user-activity-card">
+    <div class="chart-header">
+      <div>
+        <h3>◉ PIPELINE STATUS DISTRIBUTION (CLICK SLICE TO FILTER)</h3>
+      </div>
+      <span class="interactive-label">Interactive Donut</span>
+    </div>
+
+    <div class="user-chart-container">
+      <canvas #statusChartRef id="migrationStatusChart"></canvas>
+    </div>
+  </section>
+
+  <!-- RIGHT SIDE -->
+  <div class="right-charts">
+    <!-- COMPANY RECORD VOLUME -->
+    <section class="chart-card right-chart-card">
+      <div class="chart-header">
+        <div>
+          <h3>COMPANY DATA MIGRATION VOLUME (CLICK BAR)</h3>
+        </div>
+        <span class="interactive-label">Interactive Bar</span>
+      </div>
+
+      <div class="category-chart-container">
+        <canvas #companyChartRef id="migrationCompanyChart"></canvas>
+      </div>
+    </section>
+
+    <!-- WEEKLY THROUGHPUT -->
+    <section class="chart-card right-chart-card">
+      <div class="chart-header">
+        <div>
+          <h3>WEEKLY THROUGHPUT & ERROR RATE</h3>
+        </div>
+      </div>
+
+      <div class="weekly-chart-container">
+        <canvas #throughputChartRef id="migrationThroughputChart"></canvas>
+      </div>
+    </section>
+  </div>
+</div>

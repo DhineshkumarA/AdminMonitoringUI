@@ -7,6 +7,11 @@ import {
   CategoryTemplate,
   TemplateLabel
 } from './models/dashboard.model';
+import {
+  MigrationDashboardData,
+  MigrationHistoryItem,
+  MigrationScheduleItem
+} from './models/migration-dashboard.model';
 
 export interface GraphQLDashboardResponse {
   data: {
@@ -32,6 +37,24 @@ export interface GraphQLTemplateLabelsResponse {
   };
 }
 
+export interface GraphQLMigrationDashboardResponse {
+  data: {
+    migrationDashboard: MigrationDashboardData;
+  };
+}
+
+export interface GraphQLMigrationHistoriesResponse {
+  data: {
+    migrationHistories: MigrationHistoryItem[];
+  };
+}
+
+export interface GraphQLMigrationSchedulesResponse {
+  data: {
+    migrationSchedules: MigrationScheduleItem[];
+  };
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -40,6 +63,9 @@ export class DashboardService {
 
   constructor(private http: HttpClient) {}
 
+  // ==========================================
+  // LABEL DESIGNER QUERIES (ORIGINAL)
+  // ==========================================
   getDashboard(): Observable<GraphQLDashboardResponse> {
     const query = {
       query: `
@@ -182,6 +208,144 @@ export class DashboardService {
     };
 
     return this.http.post<GraphQLTemplateLabelsResponse>(
+      this.graphqlUrl,
+      query
+    );
+  }
+
+  // ==========================================
+  // DATA MIGRATION QUERIES (NEW)
+  // ==========================================
+  getMigrationDashboard(): Observable<GraphQLMigrationDashboardResponse> {
+    const query = {
+      query: `
+        query {
+          migrationDashboard {
+            totalMigrations
+            activePipelines
+            totalRecordsProcessed
+            totalSuccessRecords
+            totalErrorRecords
+            totalWarningRecords
+            successRate
+            failedMigrations
+            totalSchedules
+            queueStatus
+
+            statusDistribution {
+              status
+              count
+              percentage
+            }
+
+            companyActivity {
+              companyId
+              companyName
+              migrationCount
+              totalRecords
+              successCount
+              errorCount
+            }
+
+            weeklyThroughput {
+              day
+              totalRecords
+              successRecords
+              errorRecords
+            }
+
+            migrations {
+              id
+              name
+              status
+              lastRunTime
+              retryCount
+              lastError
+              priority
+              companyId
+              jsonConfig
+              totalRuns
+              totalRecords
+              successCount
+              errorCount
+              warningCount
+              lastDurationSeconds
+            }
+
+            recentHistories {
+              id
+              migrationId
+              migrationName
+              startTime
+              endTime
+              durationSeconds
+              totalRecords
+              successCount
+              errorCount
+              warningCount
+              status
+              companyId
+              logFileName
+            }
+          }
+        }
+      `
+    };
+
+    return this.http.post<GraphQLMigrationDashboardResponse>(
+      this.graphqlUrl,
+      query
+    );
+  }
+
+  getMigrationHistories(migrationId: string): Observable<GraphQLMigrationHistoriesResponse> {
+    const query = {
+      query: `
+        query($migrationId: String!) {
+          migrationHistories(migrationId: $migrationId) {
+            id
+            migrationId
+            migrationName
+            startTime
+            endTime
+            durationSeconds
+            totalRecords
+            successCount
+            errorCount
+            warningCount
+            status
+            companyId
+            logFileName
+          }
+        }
+      `,
+      variables: {
+        migrationId: migrationId
+      }
+    };
+
+    return this.http.post<GraphQLMigrationHistoriesResponse>(
+      this.graphqlUrl,
+      query
+    );
+  }
+
+  getMigrationSchedules(): Observable<GraphQLMigrationSchedulesResponse> {
+    const query = {
+      query: `
+        query {
+          migrationSchedules {
+            id
+            name
+            json
+            companyId
+            dateStamp
+          }
+        }
+      `
+    };
+
+    return this.http.post<GraphQLMigrationSchedulesResponse>(
       this.graphqlUrl,
       query
     );

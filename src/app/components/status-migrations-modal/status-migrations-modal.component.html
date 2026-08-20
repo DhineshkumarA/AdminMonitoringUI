@@ -1,0 +1,99 @@
+<div class="user-popup-overlay" (click)="onClose()">
+  <div class="user-popup" (click)="$event.stopPropagation()">
+    <!-- HEADER -->
+    <div class="user-popup-header">
+      <div class="user-header-left">
+        <div class="user-avatar">
+          ⚡
+        </div>
+        <div>
+          <h2>Status: {{ statusName }}</h2>
+          <p>
+            Pipelines: {{ jobs.length }}
+            &nbsp; | &nbsp;
+            Total Records: {{ totalRecords | number }}
+            &nbsp; | &nbsp;
+            Success: {{ totalSuccess | number }}
+            @if (totalErrors > 0) {
+              &nbsp; | &nbsp;
+              Errors: {{ totalErrors | number }}
+            }
+          </p>
+        </div>
+      </div>
+
+      <div class="popup-actions">
+        <button type="button" class="popup-close" (click)="onClose()" title="Close">
+          ×
+        </button>
+      </div>
+    </div>
+
+    <!-- BODY -->
+    <div class="popup-body">
+      <div class="popup-section">
+        <h3>PIPELINES WITH STATUS '{{ statusName }}' (CLICK A PIPELINE TO INSPECT RUN TELEMETRY)</h3>
+
+        @if (isLoading) {
+          <div class="loading-state">
+            Loading pipelines...
+          </div>
+        } @else {
+          <div class="table-container">
+            <div class="events-table">
+              <!-- HEADER -->
+              <div class="events-row events-header">
+                <div class="col-name">PIPELINE NAME</div>
+                <div class="col-comp">COMPANY</div>
+                <div class="col-status">STATUS</div>
+                <div class="col-priority">PRIORITY</div>
+                <div class="col-runs">RUNS</div>
+                <div class="col-records">TOTAL RECORDS</div>
+                <div class="col-lastrun">LAST RUN</div>
+              </div>
+
+              <!-- PIPELINES LIST -->
+              @for (job of jobs; track job.id) {
+                <div
+                  class="events-row job-row"
+                  (click)="onSelectJob(job)"
+                  title="Click to view detailed execution logs and telemetry"
+                >
+                  <div class="col-name font-semibold">
+                    🔄 {{ job.name }}
+                  </div>
+                  <div class="col-comp text-muted">
+                    {{ job.companyId }}
+                  </div>
+                  <div class="col-status">
+                    <span class="status-badge" [ngClass]="getStatusClass(job.status)">
+                      {{ job.status }}
+                    </span>
+                  </div>
+                  <div class="col-priority">
+                    <span class="badge-priority">P{{ job.priority }}</span>
+                  </div>
+                  <div class="col-runs">
+                    <strong>{{ job.totalRuns }}</strong>
+                  </div>
+                  <div class="col-records font-bold">
+                    <span class="badge-records">{{ job.totalRecords | number }}</span>
+                  </div>
+                  <div class="col-lastrun text-muted font-mono">
+                    {{ formatDate(job.lastRunTime) }}
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+          @if (jobs.length === 0) {
+            <div class="no-data">
+              No pipelines found with status '{{ statusName }}'.
+            </div>
+          }
+        }
+      </div>
+    </div>
+  </div>
+</div>

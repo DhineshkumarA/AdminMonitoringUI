@@ -9,6 +9,11 @@ import {
   CategoryTemplate,
   TemplateLabel
 } from './models/dashboard.model';
+import {
+  MigrationDashboardData,
+  MigrationJobSummary,
+  MigrationHistoryItem
+} from './models/migration-dashboard.model';
 
 import { HeaderComponent } from './components/header/header.component';
 import { ModuleBarComponent } from './components/module-bar/module-bar.component';
@@ -19,6 +24,14 @@ import { CategoryTemplatesModalComponent } from './components/category-templates
 import { TemplateLabelsModalComponent } from './components/template-labels-modal/template-labels-modal.component';
 import { UserDetailModalComponent } from './components/user-detail-modal/user-detail-modal.component';
 import { FooterComponent } from './components/footer/footer.component';
+
+// Migration components
+import { MigrationModuleBarComponent } from './components/migration-module-bar/migration-module-bar.component';
+import { MigrationSummaryCardsComponent } from './components/migration-summary-cards/migration-summary-cards.component';
+import { MigrationChartsGridComponent } from './components/migration-charts-grid/migration-charts-grid.component';
+import { StatusMigrationsModalComponent } from './components/status-migrations-modal/status-migrations-modal.component';
+import { CompanyMigrationsModalComponent } from './components/company-migrations-modal/company-migrations-modal.component';
+import { MigrationHistoryModalComponent } from './components/migration-history-modal/migration-history-modal.component';
 
 @Component({
   selector: 'app-root',
@@ -33,12 +46,23 @@ import { FooterComponent } from './components/footer/footer.component';
     CategoryTemplatesModalComponent,
     TemplateLabelsModalComponent,
     UserDetailModalComponent,
-    FooterComponent
+    FooterComponent,
+    MigrationModuleBarComponent,
+    MigrationSummaryCardsComponent,
+    MigrationChartsGridComponent,
+    StatusMigrationsModalComponent,
+    CompanyMigrationsModalComponent,
+    MigrationHistoryModalComponent
   ],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
 })
 export class App implements OnInit {
+  currentModule: string = 'label'; // Default landing view
+
+  // ==========================================
+  // LABEL DESIGNER STATE
+  // ==========================================
   dashboardData: DashboardData | null = null;
   selectedCompany: CompanyActivity | null = null;
   companyUsers: CompanyUser[] = [];
@@ -54,18 +78,53 @@ export class App implements OnInit {
   templateLabels: TemplateLabel[] = [];
   isLoadingTemplateLabels = false;
 
+  // ==========================================
+  // DATA MIGRATION STATE
+  // ==========================================
+  migrationDashboardData: MigrationDashboardData | null = null;
+
+  // Status Drilldown Modal State
+  selectedStatusName: string | null = null;
+  selectedStatusJobs: MigrationJobSummary[] = [];
+
+  // Company Drilldown Modal State
+  selectedCompanyMigrationName: string | null = null;
+  selectedCompanyJobs: MigrationJobSummary[] = [];
+
+  // Job History Modal State
+  selectedMigrationJob: MigrationJobSummary | null = null;
+  migrationHistories: MigrationHistoryItem[] = [];
+  isLoadingMigrationHistories = false;
+
   constructor(
     private dashboardService: DashboardService,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
+    this.loadLabelDashboard();
+  }
+
+  onModuleChange(module: string): void {
+    this.currentModule = module;
+    if (this.currentModule === 'migration') {
+      this.loadMigrationDashboard();
+    } else {
+      this.loadLabelDashboard();
+    }
+    this.cdr.detectChanges();
+  }
+
+  // ==========================================
+  // LABEL DESIGNER METHODS
+  // ==========================================
+  loadLabelDashboard(): void {
     this.dashboardService.getDashboard().subscribe({
       next: (res) => {
         this.dashboardData = res?.data?.dashboard || null;
         this.cdr.detectChanges();
       },
-      error: (err) => console.error('Dashboard API Error:', err)
+      error: (err) => console.error('Label Dashboard API Error:', err)
     });
   }
 
@@ -169,6 +228,74 @@ export class App implements OnInit {
 
   closeUserModal(): void {
     this.selectedUser = null;
+    this.cdr.detectChanges();
+  }
+
+  // ==========================================
+  // DATA MIGRATION METHODS
+  // ==========================================
+  loadMigrationDashboard(): void {
+    this.dashboardService.getMigrationDashboard().subscribe({
+      next: (res) => {
+        this.migrationDashboardData = res?.data?.migrationDashboard || null;
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Migration Dashboard API Error:', err)
+    });
+  }
+
+  onStatusSelected(status: string): void {
+    this.selectedStatusName = status;
+    const allJobs = this.migrationDashboardData?.migrations || [];
+    this.selectedStatusJobs = allJobs.filter(
+      (j) => j.status?.toUpperCase() === status.toUpperCase()
+    );
+    this.cdr.detectChanges();
+  }
+
+  closeStatusModal(): void {
+    this.selectedStatusName = null;
+    this.selectedStatusJobs = [];
+    this.cdr.detectChanges();
+  }
+
+  onCompanyMigrationSelected(companyId: string): void {
+    this.selectedCompanyMigrationName = companyId;
+    const allJobs = this.migrationDashboardData?.migrations || [];
+    this.selectedCompanyJobs = allJobs.filter(
+      (j) => (j.companyId || 'Default').toLowerCase() === companyId.toLowerCase()
+    );
+    this.cdr.detectChanges();
+  }
+
+  closeCompanyMigrationModal(): void {
+    this.selectedCompanyMigrationName = null;
+    this.selectedCompanyJobs = [];
+    this.cdr.detectChanges();
+  }
+
+  onMigrationJobSelected(job: MigrationJobSummary): void {
+    this.selectedMigrationJob = job;
+    this.isLoadingMigrationHistories = true;
+    this.migrationHistories = [];
+
+    this.dashboardService.getMigrationHistories(job.id).subscribe({
+      next: (res) => {
+        this.migrationHistories = res?.data?.migrationHistories || [];
+        this.isLoadingMigrationHistories = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error loading migration histories:', err);
+        this.isLoadingMigrationHistories = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  closeMigrationHistoryModal(): void {
+    this.selectedMigrationJob = null;
+    this.migrationHistories = [];
     this.cdr.detectChanges();
   }
 }

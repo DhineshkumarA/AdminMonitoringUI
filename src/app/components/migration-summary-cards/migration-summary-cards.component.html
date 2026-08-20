@@ -1,0 +1,73 @@
+<div class="summary-grid">
+  <!-- TOTAL MIGRATIONS -->
+  <div class="summary-card">
+    <div class="card-icon migration-icon">
+      🔄
+    </div>
+    <div class="card-content">
+      <span class="card-label">Total Migrations</span>
+      <strong>{{ dashboardData?.totalMigrations ?? '—' }}</strong>
+      <small>Configured pipelines</small>
+    </div>
+  </div>
+
+  <!-- ACTIVE PIPELINES -->
+  <div class="summary-card">
+    <div class="card-icon active-icon">
+      ⚡
+    </div>
+    <div class="card-content">
+      <span class="card-label">Active Pipelines</span>
+      <strong>{{ dashboardData?.activePipelines ?? '0' }}</strong>
+      <small>Running / In-Flight</small>
+    </div>
+  </div>
+
+  <!-- TOTAL RECORDS PROCESSED -->
+  <div class="summary-card">
+    <div class="card-icon records-icon">
+      📦
+    </div>
+    <div class="card-content">
+      <span class="card-label">Total Records</span>
+      <strong>{{ dashboardData?.totalRecordsProcessed ? (dashboardData?.totalRecordsProcessed | number) : '0' }}</strong>
+      <small>Data items migrated</small>
+    </div>
+  </div>
+
+  <!-- SUCCESS RATE -->
+  <div class="summary-card">
+    <div class="card-icon success-icon">
+      ✅
+    </div>
+    <div class="card-content">
+      <span class="card-label">Success Rate</span>
+      <strong>{{ dashboardData?.successRate ?? 100 }}%</strong>
+      <small>Overall integrity</small>
+    </div>
+  </div>
+
+  <!-- FAILED RUNS / ERRORS -->
+  <div class="summary-card">
+    <div class="card-icon error-icon">
+      ⚠️
+    </div>
+    <div class="card-content">
+      <span class="card-label">Failed Migrations</span>
+      <strong>{{ dashboardData?.failedMigrations ?? 0 }}</strong>
+      <small>Requires attention</small>
+    </div>
+  </div>
+
+  <!-- SCHEDULES -->
+  <div class="summary-card">
+    <div class="card-icon schedule-icon">
+      📅
+    </div>
+    <div class="card-content">
+      <span class="card-label">Active Schedules</span>
+      <strong>{{ dashboardData?.totalSchedules ?? 0 }}</strong>
+      <small>Automated batches</small>
+    </div>
+  </div>
+</div>
