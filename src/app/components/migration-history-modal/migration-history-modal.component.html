@@ -1,0 +1,147 @@
+<div class="user-popup-overlay" (click)="onClose()">
+  <div class="user-popup" (click)="$event.stopPropagation()">
+    <!-- HEADER -->
+    <div class="user-popup-header">
+      <div class="user-header-left">
+        <div class="user-avatar">
+          📜
+        </div>
+        <div>
+          <h2>{{ job?.name || 'Migration Pipeline' }}</h2>
+          <p>
+            Status: <span class="status-badge" [ngClass]="getStatusClass(job?.status || '')">{{ job?.status || 'PENDING' }}</span>
+            &nbsp; | &nbsp;
+            Company: {{ job?.companyId || 'Default' }}
+            &nbsp; | &nbsp;
+            Total Runs: {{ job?.totalRuns || 0 }}
+          </p>
+        </div>
+      </div>
+
+      <div class="popup-actions">
+        <button type="button" class="btn-config" (click)="toggleConfig()">
+          {{ showJsonConfig ? 'Hide Config' : 'View Config' }}
+        </button>
+        <button type="button" class="btn-export" (click)="exportCSV()" [disabled]="!histories.length">
+          Export CSV ⬇
+        </button>
+        <button type="button" class="popup-close" (click)="onClose()" title="Close">
+          ×
+        </button>
+      </div>
+    </div>
+
+    <!-- BODY -->
+    <div class="popup-body">
+      <!-- ERROR BANNER IF ANY -->
+      @if (job?.lastError) {
+        <div class="error-banner">
+          <strong>⚠️ Last Pipeline Error:</strong> {{ job?.lastError }}
+        </div>
+      }
+
+      <!-- JSON CONFIG VIEWER COLLAPSIBLE -->
+      @if (showJsonConfig) {
+        <div class="json-viewer">
+          <div class="json-header">
+            <span>Pipeline JSON Configuration</span>
+          </div>
+          <pre><code>{{ job?.jsonConfig || 'No JSON configuration payload provided for this pipeline.' }}</code></pre>
+        </div>
+      }
+
+      <!-- METRIC SUMMARY TILES -->
+      <div class="popup-summary-grid">
+        <div class="popup-stat">
+          <div>
+            <span>TOTAL RECORDS</span>
+            <strong>{{ (job?.totalRecords || 0) | number }}</strong>
+          </div>
+          <div class="stat-icon">📦</div>
+        </div>
+        <div class="popup-stat">
+          <div>
+            <span>SUCCESSFUL</span>
+            <strong class="text-success">{{ (job?.successCount || 0) | number }}</strong>
+          </div>
+          <div class="stat-icon">✅</div>
+        </div>
+        <div class="popup-stat">
+          <div>
+            <span>ERRORS</span>
+            <strong class="text-danger">{{ (job?.errorCount || 0) | number }}</strong>
+          </div>
+          <div class="stat-icon">❌</div>
+        </div>
+        <div class="popup-stat">
+          <div>
+            <span>WARNINGS</span>
+            <strong class="text-warning">{{ (job?.warningCount || 0) | number }}</strong>
+          </div>
+          <div class="stat-icon">⚠️</div>
+        </div>
+        <div class="popup-stat">
+          <div>
+            <span>RETRY COUNT</span>
+            <strong>{{ job?.retryCount || 0 }}</strong>
+          </div>
+          <div class="stat-icon">🔄</div>
+        </div>
+        <div class="popup-stat">
+          <div>
+            <span>PRIORITY</span>
+            <strong>P{{ job?.priority || 0 }}</strong>
+          </div>
+          <div class="stat-icon">⭐</div>
+        </div>
+      </div>
+
+      <!-- HISTORIES TABLE -->
+      <div class="popup-section events-section">
+        <h3>EXECUTION AUDIT & RUN TELEMETRY ({{ histories.length }} RUNS)</h3>
+
+        @if (isLoading) {
+          <div class="loading-state">Loading execution telemetry logs...</div>
+        } @else if (histories.length === 0) {
+          <div class="no-data">No execution history recorded for this pipeline yet.</div>
+        } @else {
+          <div class="events-table-wrapper">
+            <div class="events-table">
+              <div class="events-row events-header">
+                <div>RUN ID</div>
+                <div>STATUS</div>
+                <div>START TIME</div>
+                <div>END TIME</div>
+                <div>DURATION</div>
+                <div>TOTAL RECORDS</div>
+                <div>SUCCESS</div>
+                <div>ERRORS</div>
+                <div>LOG FILE</div>
+              </div>
+
+              @for (h of histories; track h.id) {
+                <div class="events-row">
+                  <div class="id-cell font-mono">#{{ h.id }}</div>
+                  <div>
+                    <span class="status-badge" [ngClass]="getStatusClass(h.status)">
+                      {{ h.status }}
+                    </span>
+                  </div>
+                  <div class="font-mono text-muted">{{ formatDate(h.startTime) }}</div>
+                  <div class="font-mono text-muted">{{ formatDate(h.endTime) }}</div>
+                  <div class="font-mono">{{ h.durationSeconds ? h.durationSeconds + 's' : '—' }}</div>
+                  <div class="font-semibold">{{ h.totalRecords | number }}</div>
+                  <div class="text-success font-semibold">{{ h.successCount | number }}</div>
+                  <div><span [class.text-danger]="h.errorCount > 0">{{ h.errorCount | number }}</span></div>
+                  <div class="log-file-cell" [title]="h.logFileName || 'No log file'">
+                    {{ h.logFileName || '—' }}
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>

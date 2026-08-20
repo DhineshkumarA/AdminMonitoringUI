@@ -1,0 +1,45 @@
+<div class="chart-grid">
+  <!-- LEFT: COMPANY ACTIVITY -->
+  <section class="chart-card user-activity-card">
+    <div class="chart-header">
+      <div>
+        <h3>◉ COMPANY ACTIVITY (CLICK SLICE FOR COMPANY USERS)</h3>
+      </div>
+      <span class="interactive-label">Interactive Pie</span>
+    </div>
+
+    <div class="user-chart-container">
+      <canvas #userActivityChartRef id="userActivityChart"></canvas>
+    </div>
+  </section>
+
+  <!-- RIGHT SIDE -->
+  <div class="right-charts">
+    <!-- TEMPLATES BY CATEGORY -->
+    <section class="chart-card right-chart-card">
+      <div class="chart-header">
+        <div>
+          <h3>TEMPLATES BY CATEGORY (CLICK BAR FOR TEMPLATES)</h3>
+        </div>
+        <span class="interactive-label">Interactive Bar</span>
+      </div>
+
+      <div class="category-chart-container">
+        <canvas #categoryChartRef id="categoryChart"></canvas>
+      </div>
+    </section>
+
+    <!-- WEEKLY PRINT SPOOL -->
+    <section class="chart-card right-chart-card">
+      <div class="chart-header">
+        <div>
+          <h3>WEEKLY PRINT SPOOL VOLUME (GROWING MOTION)</h3>
+        </div>
+      </div>
+
+      <div class="weekly-chart-container">
+        <canvas #weeklyChartRef id="weeklyChart"></canvas>
+      </div>
+    </section>
+  </div>
+</div>

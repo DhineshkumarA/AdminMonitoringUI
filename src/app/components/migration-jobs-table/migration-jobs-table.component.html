@@ -1,0 +1,98 @@
+<section class="jobs-card">
+  <div class="table-header">
+    <div class="table-title">
+      <h3>📋 MIGRATION PIPELINES & BATCH JOBS ({{ filteredJobs.length }})</h3>
+      <span class="sub-title">Click any row to drill down into execution history & log telemetry</span>
+    </div>
+
+    <div class="table-controls">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input
+          type="text"
+          placeholder="Filter pipelines..."
+          [value]="searchTerm"
+          (input)="searchTerm = $any($event.target).value"
+        />
+      </div>
+
+      <div class="status-filters">
+        <button
+          [class.active]="selectedFilterStatus === 'ALL'"
+          (click)="selectedFilterStatus = 'ALL'"
+        >All</button>
+        <button
+          [class.active]="selectedFilterStatus === 'RUNNING'"
+          (click)="selectedFilterStatus = 'RUNNING'"
+        >Running</button>
+        <button
+          [class.active]="selectedFilterStatus === 'SUCCESS'"
+          (click)="selectedFilterStatus = 'SUCCESS'"
+        >Success</button>
+        <button
+          [class.active]="selectedFilterStatus === 'FAILED'"
+          (click)="selectedFilterStatus = 'FAILED'"
+        >Failed</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-container">
+    <table class="jobs-table">
+      <thead>
+        <tr>
+          <th>Pipeline / Job Name</th>
+          <th>Status</th>
+          <th>Priority</th>
+          <th>Retry</th>
+          <th>Total Runs</th>
+          <th>Total Records</th>
+          <th>Success / Errors</th>
+          <th>Last Run</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (filteredJobs.length === 0) {
+          <tr class="empty-row">
+            <td colspan="9">No migration pipelines match the criteria.</td>
+          </tr>
+        } @else {
+          @for (job of filteredJobs; track job.id) {
+            <tr class="job-row" (click)="onSelectJob(job)">
+              <td class="name-cell">
+                <div class="job-name">{{ job.name }}</div>
+                <div class="job-meta">Company: {{ job.companyId }} | ID: {{ job.id.substring(0, 8) }}...</div>
+              </td>
+              <td>
+                <span class="status-badge" [ngClass]="getStatusClass(job.status)">
+                  {{ job.status }}
+                </span>
+              </td>
+              <td>
+                <span class="priority-pill">P{{ job.priority }}</span>
+              </td>
+              <td>
+                <span [class.text-danger]="job.retryCount > 0">{{ job.retryCount }}</span>
+              </td>
+              <td><strong>{{ job.totalRuns }}</strong></td>
+              <td>{{ job.totalRecords | number }}</td>
+              <td>
+                <span class="text-success">{{ job.successCount | number }}</span>
+                @if (job.errorCount > 0) {
+                  / <span class="text-danger">{{ job.errorCount | number }}</span>
+                }
+              </td>
+              <td class="time-cell">{{ formatDate(job.lastRunTime) }}</td>
+              <td>
+                <button class="btn-inspect" (click)="onSelectJob(job); $event.stopPropagation()">
+                  Inspect Logs ➔
+                </button>
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+</section>

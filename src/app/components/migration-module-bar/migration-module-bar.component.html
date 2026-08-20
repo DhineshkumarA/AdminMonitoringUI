@@ -1,0 +1,26 @@
+<div class="module-bar">
+  <div class="module-title">
+    <span class="module-dot"></span>
+    {{ moduleTitle }}
+  </div>
+
+  <div class="module-status">
+    <span class="status-item online-status">
+      <span class="pulse-dot"></span>
+      Active Pipelines: <strong>{{ activePipelines }}</strong>
+    </span>
+
+    <span class="status-item rate-status">
+      Success Rate: <strong>{{ successRate }}%</strong>
+    </span>
+
+    <span class="status-item spool-status">
+      Pipeline Health:
+      <strong
+        [class.status-healthy]="queueStatus === 'HEALTHY'"
+        [class.status-warning]="queueStatus === 'WARNING'"
+        [class.status-critical]="queueStatus === 'CRITICAL'"
+      >{{ queueStatus }}</strong>
+    </span>
+  </div>
+</div>

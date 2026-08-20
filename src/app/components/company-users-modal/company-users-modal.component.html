@@ -1,0 +1,74 @@
+<div class="user-popup-overlay" (click)="onClose()">
+  <div class="user-popup" (click)="$event.stopPropagation()">
+    <!-- HEADER -->
+    <div class="user-popup-header">
+      <div class="user-header-left">
+        <div class="user-avatar">
+          {{ company?.companyName ? company!.companyName.charAt(0) : 'C' }}
+        </div>
+        <div>
+          <h2>{{ company?.companyName }}</h2>
+          <p>
+            Users: {{ company?.userCount ?? 0 }}
+            &nbsp; | &nbsp;
+            Print Jobs: {{ company?.printJobs ?? 0 }}
+          </p>
+        </div>
+      </div>
+
+      <div class="popup-actions">
+        <button type="button" class="popup-close" (click)="onClose()" title="Close">
+          ×
+        </button>
+      </div>
+    </div>
+
+    <!-- BODY -->
+    <div class="popup-body">
+      <div class="popup-section">
+        <h3>COMPANY USERS (CLICK USER FOR ACTIVITY DETAILS)</h3>
+
+        @if (isLoading) {
+          <div class="loading-state">
+            Loading company users...
+          </div>
+        } @else {
+          <div class="table-container">
+            <div class="events-table">
+              <!-- HEADER -->
+              <div class="events-row events-header">
+                <div>USER</div>
+                <div>TEMPLATES</div>
+                <div>PRINT JOBS</div>
+              </div>
+
+              <!-- USERS LIST -->
+              @for (user of users; track user.id) {
+                <div
+                  class="events-row company-user-row"
+                  (click)="onSelectUser(user)"
+                >
+                  <div class="event-user-name">
+                    {{ user.name || 'Unknown User' }}
+                  </div>
+                  <div>
+                    {{ user.templates }}
+                  </div>
+                  <div>
+                    {{ user.printJobs }}
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+          @if (users.length === 0) {
+            <div class="no-data">
+              No users found for this company.
+            </div>
+          }
+        }
+      </div>
+    </div>
+  </div>
+</div>

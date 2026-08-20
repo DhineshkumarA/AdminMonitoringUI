@@ -1,0 +1,94 @@
+<div class="user-popup-overlay" (click)="onClose()">
+  <div class="user-popup" (click)="$event.stopPropagation()">
+    <!-- HEADER -->
+    <div class="user-popup-header">
+      <div class="user-header-left">
+        <div class="user-avatar">
+          🗂️
+        </div>
+        <div>
+          <h2>{{ categoryName || 'Category' }}</h2>
+          <p>
+            Templates: {{ templates.length }}
+            &nbsp; | &nbsp;
+            Total Category Print Spool: {{ totalPrints }}
+          </p>
+        </div>
+      </div>
+
+      <div class="popup-actions">
+        <button type="button" class="popup-close" (click)="onClose()" title="Close">
+          ×
+        </button>
+      </div>
+    </div>
+
+    <!-- BODY -->
+    <div class="popup-body">
+      <div class="popup-section">
+        <h3>TEMPLATES IN THIS CATEGORY (CLICK A TEMPLATE TO VIEW PRINT JOBS & USERS)</h3>
+
+        @if (isLoading) {
+          <div class="loading-state">
+            Loading category templates...
+          </div>
+        } @else {
+          <div class="table-container">
+            <div class="events-table">
+              <!-- HEADER -->
+              <div class="events-row events-header">
+                <div class="col-name">TEMPLATE NAME</div>
+                <div class="col-spec">PAPER / SPECS</div>
+                <div class="col-ver">VERSION</div>
+                <div class="col-status">STATUS</div>
+                <div class="col-prints">PRINT JOBS</div>
+                <div class="col-author">AUTHOR</div>
+              </div>
+
+              <!-- TEMPLATES LIST -->
+              @for (tmpl of templates; track tmpl.id) {
+                <div
+                  class="events-row template-row"
+                  (click)="onSelectTemplate(tmpl)"
+                  title="Click to view all print jobs for this template"
+                >
+                  <div class="col-name font-semibold">
+                    📄 {{ tmpl.name }}
+                  </div>
+                  <div class="col-spec text-muted">
+                    {{ tmpl.paperSize }} ({{ tmpl.orientation }})
+                  </div>
+                  <div class="col-ver">
+                    <span class="badge-version">v{{ tmpl.version ?? '1.0' }}</span>
+                  </div>
+                  <div class="col-status">
+                    @if (tmpl.stable === 1) {
+                      <span class="badge-stable">🟢 Stable</span>
+                    } @else {
+                      <span class="badge-draft">🟡 Draft</span>
+                    }
+                    @if (tmpl.lockTemplate === 1) {
+                      <span class="badge-locked" title="Locked from edits">🔒</span>
+                    }
+                  </div>
+                  <div class="col-prints font-bold">
+                    <span class="badge-prints">{{ tmpl.printJobs }}</span>
+                  </div>
+                  <div class="col-author text-muted">
+                    {{ tmpl.author || 'Admin' }}
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+          @if (templates.length === 0) {
+            <div class="no-data">
+              No templates found in this category.
+            </div>
+          }
+        }
+      </div>
+    </div>
+  </div>
+</div>

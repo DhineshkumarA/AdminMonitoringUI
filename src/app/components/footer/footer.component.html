@@ -1,0 +1,26 @@
+<footer class="footer">
+  <div class="footer-left">
+    <span>Admin Monitoring System ({{ currentModule === 'migration' ? 'Data Migration' : 'Label Designer' }})</span>
+  </div>
+
+  <div class="footer-right">
+    <button
+      type="button"
+      class="btn-audit btn-csv"
+      (click)="exportAuditCSV()"
+      [disabled]="currentModule === 'migration' ? !migrationDashboardData : !dashboardData"
+      [title]="currentModule === 'migration' ? 'Download Data Migration audit report in CSV' : 'Download Label Designer audit report in CSV'"
+    >
+      ↓ Export CSV
+    </button>
+    <button
+      type="button"
+      class="btn-audit btn-excel"
+      (click)="exportAuditExcel()"
+      [disabled]="currentModule === 'migration' ? !migrationDashboardData : !dashboardData"
+      [title]="currentModule === 'migration' ? 'Download Data Migration audit report in Excel' : 'Download Label Designer audit report in Excel'"
+    >
+      ▣ Export Excel
+    </button>
+  </div>
+</footer>

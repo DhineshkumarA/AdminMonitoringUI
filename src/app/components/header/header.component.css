@@ -1,0 +1,190 @@
+:host {
+  display: block;
+}
+
+/* =========================================
+   HEADER WRAPPER
+========================================= */
+.header-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 2000;
+  pointer-events: none;
+}
+
+/* =========================================
+   TOP MENU HOVER AREA (INVISIBLE TRIGGER)
+========================================= */
+.top-hover-zone {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 35px;
+  pointer-events: auto;
+}
+
+/* =========================================
+   EXPANDABLE HEADER
+========================================= */
+.header {
+  position: absolute;
+  top: -70px;
+  left: 0;
+  width: 100%;
+  height: 70px;
+  padding: 0 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #1e1b4b;
+  transition: top 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-sizing: border-box;
+  pointer-events: auto;
+  box-shadow: 0 4px 25px rgba(30, 27, 75, 0.35);
+}
+
+/* HOVER BRIDGE TO PREVENT FLICKER */
+.header::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -24px;
+  width: 100%;
+  height: 24px;
+  pointer-events: auto;
+}
+
+/* HOVER TRIGGERS */
+.top-hover-zone:hover ~ .header,
+.header:hover {
+  top: 0;
+}
+
+/* =========================================
+   INDICATOR TAB (MOVES WITH HEADER)
+========================================= */
+.top-arrow {
+  position: absolute;
+  bottom: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 24px;
+  min-width: 240px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: #1e1b4b;
+  color: #fbcfe8;
+  border-radius: 0 0 8px 8px;
+  font-size: 12px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(30, 27, 75, 0.3);
+  transition: all 0.25s ease;
+  pointer-events: auto;
+  user-select: none;
+  border-top: none;
+}
+
+.arrow-icon {
+  font-size: 13px;
+  transition: transform 0.25s ease;
+}
+
+.header:hover .arrow-icon {
+  transform: rotate(180deg);
+}
+
+.top-arrow:hover,
+.header:hover .top-arrow {
+  color: #ffffff;
+}
+
+/* =========================================
+   HEADER CONTENT
+========================================= */
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.header-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #be185d, #9f1239);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(190, 24, 93, 0.3);
+}
+
+.header-left h1 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.module-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #fbcfe8;
+  letter-spacing: 0.5px;
+}
+
+.module-select {
+  width: 165px;
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid #6b21a8;
+  border-radius: 9px;
+  background: #312e81;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.module-select:hover {
+  border-color: #a855f7;
+}
+
+.module-select:focus {
+  border-color: #be185d;
+  box-shadow: 0 0 0 2px rgba(190, 24, 93, 0.25);
+}
+
+.module-select option {
+  background: #312e81;
+  color: #ffffff;
+}
+
+@media (max-width: 600px) {
+  .header {
+    padding: 0 15px;
+  }
+  .header-right {
+    display: none;
+  }
+  .top-arrow {
+    min-width: 180px;
+    font-size: 11px;
+  }
+}

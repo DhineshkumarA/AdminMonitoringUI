@@ -1,711 +1,126 @@
 <div class="dashboard">
-
-  <!-- INVISIBLE TOP TRIGGER -->
-  <div class="top-hover-zone">
-    <div class="top-arrow">
-      ⌄ &nbsp; Move Mouse To Top For Menu
-    </div>
-  </div>
-
-  <!-- HIDDEN HEADER -->
-  <header class="header">
-
-    <div class="header-left">
-      <div class="header-icon">
-        📊
-      </div>
-
-      <div>
-        <h1>Production Monitoring System</h1>
-
-      </div>
-    </div>
-
-    <div class="header-right">
-
-      <span class="module-label">
-        MODULE:
-      </span>
-
-      <select class="module-select">
-        <option value="label">Label Designer</option>
-        <option value="migration">Data Migration</option>
-      </select>
-
-    </div>
-
-  </header>
-
-
-  <!-- THIS MUST BE OUTSIDE HEADER -->
-  <div class="module-bar">
-
-    <div class="module-title">
-      <span class="module-dot"></span>
-      LABEL DESIGNER MODULE COMPONENT
-    </div>
-
-    <div class="module-status">
-      <span>Designers Online: 41</span>
-      <span>Spool Queue: <strong>HEALTHY</strong></span>
-    </div>
-
-  </div>
-
-  <!-- MAIN CONTENT -->
-
-  <main class="main-content">
-
-    <!-- SUMMARY CARDS -->
-
-    <div class="summary-grid">
-
-      <div class="summary-card">
-
-        <div class="card-icon users-icon">
-          👤
-        </div>
-
-        <div class="card-content">
-
-          <span class="card-label">
-            Total Users
-          </span>
-
-          <strong>
-            {{dashboardData?.totalUsers}}
-          </strong>
-
-          <small>
-            Active users
-          </small>
-
-        </div>
-
-      </div>
-
-      <div class="summary-card">
-
-        <div class="card-icon template-icon">
-          📄
-        </div>
-
-        <div class="card-content">
-
-          <span class="card-label">
-            Total Templates
-          </span>
-
-          <strong>
-            {{dashboardData?.totalTemplates}}
-          </strong>
-
-          <small>
-            Created templates
-          </small>
-
-        </div>
-
-      </div>
-
-
-      <div class="summary-card">
-
-        <div class="card-icon print-icon">
-          🖨️
-        </div>
-
-        <div class="card-content">
-
-          <span class="card-label">
-            Print Jobs
-          </span>
-
-          <strong>
-            {{dashboardData?.printJobs}}
-          </strong>
-
-          <small>
-            This month
-          </small>
-
-        </div>
-
-      </div>
-
-
-      <div class="summary-card">
-
-        <div class="card-icon migration-icon">
-          🗂️
-        </div>
-
-        <div class="card-content">
-
-          <span class="card-label">
-            Total Categories
-          </span>
-
-          <strong>
-            {{dashboardData?.totalCategories}}
-          </strong>
-
-          <small>
-            Available categories
-          </small>
-
-        </div>
-
-      </div>
-
-
-      <div class="summary-card">
-
-        <div class="card-icon failed-icon">
-          🏢
-        </div>
-
-        <div class="card-content">
-
-          <span class="card-label">
-             Total Companies
-          </span>
-
-          <strong>
-            {{dashboardData?.totalCompanies}}
-          </strong>
-
-          <small>
-            Registered companies
-          </small>
-
-        </div>
-
-      </div>
-
-    </div>
-
-<div class="chart-grid">
-
-  <!-- =====================================
-       LEFT: USER ACTIVITY
-  ====================================== -->
-
-  <section class="chart-card user-activity-card">
-
-    <div class="chart-header">
-
-      <div>
-        <h3>
-          ◉ COMPANY ACTIVITY
-          (CLICK SLICE FOR COMPANY USERS)
-        </h3>
-      </div>
-
-      <span class="interactive-label">
-        Interactive Pie
-      </span>
-
-    </div>
-
-    <div class="user-chart-container">
-
-      <canvas id="userActivityChart"></canvas>
-
-    </div>
-
-  </section>
-
-     <!-- =====================================
-        RIGHT SIDE
-    ====================================== -->
-
-    <div class="right-charts">
-
-
-      <!-- =================================
-          TEMPLATES BY CATEGORY
-      ================================== -->
-
-      <section class="chart-card right-chart-card">
-
-        <div class="chart-header">
-
-          <div>
-            <h3>
-              TEMPLATES BY CATEGORY
-              (GROWING MOTION)
-            </h3>
-          </div>
-
-        </div>
-
-        <div class="category-chart-container">
-
-          <canvas id="categoryChart"></canvas>
-
-        </div>
-
-      </section>
-
-
-      <!-- =================================
-          WEEKLY PRINT SPOOL
-      ================================== -->
-
-      <section class="chart-card right-chart-card">
-
-        <div class="chart-header">
-
-          <div>
-            <h3>
-              WEEKLY PRINT SPOOL VOLUME
-              (GROWING MOTION)
-            </h3>
-          </div>
-
-        </div>
-
-        <div class="weekly-chart-container">
-
-          <canvas id="weeklyChart"></canvas>
-
-        </div>
-
-      </section>
-
-
-    </div>
-
-  </div>
-
-
-    <!-- SELECTED USER -->
-
-    @if (selectedUser) {
-
-      <!-- =================================================
-          USER POPUP OVERLAY
-      ================================================== -->
-
-      <div class="user-popup-overlay user-popup-overlay-active">
-
-        <!-- =================================================
-            USER POPUP
-        ================================================== -->
-
-        <div class="user-popup">
-
-
-          <!-- =================================================
-              POPUP HEADER
-          ================================================== -->
-
-          <div class="user-popup-header">
-
-
-            <div class="user-header-left">
-
-              <div class="user-avatar">
-
-                {{ selectedUser.name.charAt(0) }}
-
-              </div>
-
-
-              <div>
-
-                <h2>
-                  {{ selectedUser.name }}
-                </h2>
-
-                <p>
-                  Client: {{ selectedUser.client }}
-                </p>
-
-              </div>
-
-            </div>
-
-
-            <!-- ACTION BUTTONS -->
-
-            <div class="popup-actions">
-
-              <button
-                type="button"
-                class="export-csv"
-                (click)="exportCSV()"
-              >
-                ↓ Export CSV
-              </button>
-
-
-              <button
-                type="button"
-                class="export-excel"
-                (click)="exportExcel()"
-              >
-                ▣ Export Excel
-              </button>
-
-
-              <button
-                type="button"
-                class="popup-close"
-                (click)="closeUserDashboard()"
-              >
-                ×
-              </button>
-
-            </div>
-
-          </div>
-
-
-
-          <!-- =================================================
-              USER SUMMARY
-          ================================================== -->
-
-          <div class="popup-body">
-
-
-            <div class="popup-summary-grid">
-
-
-              <!-- TEMPLATES -->
-
-              <div class="popup-stat">
-
-                <div>
-
-                  <span>
-                    Templates Authored
-                  </span>
-
-                  <strong>
-                    {{ selectedUser.templates }}
-                  </strong>
-
-                </div>
-
-                <div class="stat-icon template-stat-icon">
-                  ⚒
-                </div>
-
-              </div>
-
-
-              <!-- PRINT JOBS -->
-
-              <div class="popup-stat">
-
-                <div>
-
-                  <span>
-                    Print Jobs Triggered
-                  </span>
-
-                  <strong>
-                    {{ selectedUser.printJobs }}
-                  </strong>
-
-                </div>
-
-                <div class="stat-icon print-stat-icon">
-                  🖨
-                </div>
-
-              </div>
-
-
-              <!-- ACTIVITY -->
-
-              <div class="popup-stat">
-
-                <div>
-
-                  <span>
-                    Activity Share
-                  </span>
-
-                  <strong class="activity-value">
-                    {{ selectedUser.percentage }}%
-                  </strong>
-
-                </div>
-
-                <div class="stat-icon activity-stat-icon">
-                  ◉
-                </div>
-
-              </div>
-
-
-            </div>
-
-
-
-            <!-- =================================================
-                HOURLY ACTIVITY TIMELINE
-            ================================================== -->
-
-            <div class="popup-section">
-
-              <h3>
-                HOURLY ACTIVITY TIMELINE
-              </h3>
-
-
-              <div class="popup-chart-container">
-
-                <canvas id="userDetailChart"></canvas>
-
-              </div>
-
-            </div>
-
-
-
-            <!-- =================================================
-                SPECIFIC USAGE EVENTS
-            ================================================== -->
-
-            <div class="popup-section events-section">
-
-              <h3>
-                SPECIFIC USAGE EVENTS HISTORY (JSONB)
-              </h3>
-
-
-              <div class="events-table">
-
-
-                <!-- TABLE HEADER -->
-
-                <div class="events-row events-header">
-
-                  <div>
-                    TIME
-                  </div>
-
-                  <div>
-                    ACTION
-                  </div>
-
-                  <div>
-                    EVENT DETAILS (JSONB)
-                  </div>
-
-                </div>
-
-                @for (event of selectedUser.usageEvents; track event.time) {
-                <!-- ROW 1 -->
-
-                  <div class="events-row">
-
-                    <div class="event-time">
-                      {{event.time}}
-                    </div>
-
-                    <div class="event-action">
-                      {{ event.action }}
-                    </div>
-
-                    <div class="event-json">
-                      {{ event.eventDetails }}
-                    </div>
-
-                  </div>
-                }
-
-              </div>
-
-            </div>
-
-
-          </div>
-
-        </div>
-
-      </div>
-
-    }
-
-    @if (selectedCompany) {
-
-      <div class="user-popup-overlay company-popup-overlay">
-
-        <div class="user-popup">
-
-          <!-- HEADER -->
-
-          <div class="user-popup-header">
-
-            <div class="user-header-left">
-
-              <div class="user-avatar">
-                {{ selectedCompany.companyName.charAt(0) }}
-              </div>
-
-              <div>
-
-                <h2>
-                  {{ selectedCompany.companyName }}
-                </h2>
-
-                <p>
-                  Users: {{ selectedCompany.userCount }}
-                  &nbsp; | &nbsp;
-                  Print Jobs: {{ selectedCompany.printJobs }}
-                </p>
-
-              </div>
-
-            </div>
-
-            <div class="popup-actions">
-
-              <button
-                type="button"
-                class="popup-close"
-                (click)="closeCompanyPopup()"
-              >
-                ×
-              </button>
-
-            </div>
-
-          </div>
-
-
-          <!-- COMPANY USERS -->
-
-          <div class="popup-body">
-
-            <div class="popup-section">
-
-              <h3>
-                COMPANY USERS
-              </h3>
-
-
-              <div class="events-table">
-
-                <!-- HEADER -->
-
-                <div class="events-row events-header">
-
-                  <div>
-                    USER
-                  </div>
-
-                  <div>
-                    TEMPLATES
-                  </div>
-
-                  <div>
-                    PRINT JOBS
-                  </div>
-
-                </div>
-
-
-                <!-- USERS -->
-
-                @for (user of companyUsers; track user.id) {
-
-                  <div
-                    class="events-row company-user-row"
-                    (click)="selectCompanyUser(user)"
-                  >
-
-                    <div class="event-time">
-                      {{ user.name || 'Unknown User' }}
-                    </div>
-
-                    <div>
-                      {{ user.templates }}
-                    </div>
-
-                    <div>
-                      {{ user.printJobs }}
-                    </div>
-
-                  </div>
-
-                }
-
-              </div>
-
-
-              @if (companyUsers.length === 0) {
-
-                <div class="no-data">
-                  No users found for this company.
-                </div>
-
-              }
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    }
-  </main>
-
-
-
-
-  <!-- FOOTER -->
-
-  <footer class="footer">
-
-    <span>
-      Admin Monitoring System
-    </span>
-
-    <span>
-      LB Dashboard
-    </span>
-
-  </footer>
-
-
-  <!-- <div *ngIf="dashboardData">
-
-  <h2>GraphQL Connected</h2>
-
-  <p>
-    Total Users:
-    {{ dashboardData.totalUsers }}
-  </p>
-
-  <p>
-    Total Templates:
-    {{ dashboardData.totalTemplates }}
-  </p>
-
-  <p>
-    Print Jobs:
-    {{ dashboardData.printJobs }}
-  </p>
-
-  <p>
-    Data Imports:
-    {{ dashboardData.dataImports }}
-  </p>
-
-  <p>
-    Failed Imports:
-    {{ dashboardData.failedImports }}
-  </p> -->
-
-<!-- </div> -->
-
+  <app-header
+    [selectedModule]="currentModule"
+    (moduleChange)="onModuleChange($event)"
+  ></app-header>
+
+  <!-- ========================================== -->
+  <!-- 🏷️ LABEL DESIGNER MODULE (DEFAULT VIEW)   -->
+  <!-- ========================================== -->
+  @if (currentModule === 'label') {
+    <app-module-bar
+      [designersOnline]="dashboardData?.designersOnline ?? 0"
+      [spoolQueueStatus]="dashboardData?.spoolQueueStatus ?? 'HEALTHY'"
+    ></app-module-bar>
+
+    <main class="main-content">
+      <app-summary-cards [dashboardData]="dashboardData"></app-summary-cards>
+
+      <app-charts-grid
+        [dashboardData]="dashboardData"
+        (companyClick)="onCompanySelected($event)"
+        (categoryClick)="onCategorySelected($event)"
+      ></app-charts-grid>
+
+      @if (selectedCompany) {
+        <app-company-users-modal
+          [company]="selectedCompany"
+          [users]="companyUsers"
+          [isLoading]="isLoadingCompanyUsers"
+          (close)="closeCompanyModal()"
+          (userSelect)="onCompanyUserSelected($event)"
+        ></app-company-users-modal>
+      }
+
+      @if (selectedCategoryName) {
+        <app-category-templates-modal
+          [categoryName]="selectedCategoryName"
+          [templates]="categoryTemplates"
+          [isLoading]="isLoadingCategoryTemplates"
+          (close)="closeCategoryModal()"
+          (templateSelect)="onTemplateSelected($event)"
+        ></app-category-templates-modal>
+      }
+
+      @if (selectedTemplate) {
+        <app-template-labels-modal
+          [template]="selectedTemplate"
+          [labels]="templateLabels"
+          [isLoading]="isLoadingTemplateLabels"
+          (close)="closeTemplateLabelsModal()"
+          (userSelect)="onLabelUserSelected($event)"
+        ></app-template-labels-modal>
+      }
+
+      @if (selectedUser) {
+        <app-user-detail-modal
+          [user]="selectedUser"
+          (close)="closeUserModal()"
+        ></app-user-detail-modal>
+      }
+    </main>
+
+    <app-footer
+      [currentModule]="'label'"
+      [dashboardData]="dashboardData"
+    ></app-footer>
+  }
+
+  <!-- ========================================== -->
+  <!-- 🔄 DATA MIGRATION MODULE (INTERACTIVE)     -->
+  <!-- ========================================== -->
+  @if (currentModule === 'migration') {
+    <app-migration-module-bar
+      [activePipelines]="migrationDashboardData?.activePipelines ?? 0"
+      [queueStatus]="migrationDashboardData?.queueStatus ?? 'HEALTHY'"
+      [successRate]="migrationDashboardData?.successRate ?? 100"
+    ></app-migration-module-bar>
+
+    <main class="main-content">
+      <app-migration-summary-cards
+        [dashboardData]="migrationDashboardData"
+      ></app-migration-summary-cards>
+
+      <app-migration-charts-grid
+        [dashboardData]="migrationDashboardData"
+        (statusClick)="onStatusSelected($event)"
+        (companyClick)="onCompanyMigrationSelected($event)"
+      ></app-migration-charts-grid>
+
+      <!-- STATUS DRILLDOWN MODAL (Click Donut Slice) -->
+      @if (selectedStatusName) {
+        <app-status-migrations-modal
+          [statusName]="selectedStatusName"
+          [jobs]="selectedStatusJobs"
+          (close)="closeStatusModal()"
+          (jobSelect)="onMigrationJobSelected($event)"
+        ></app-status-migrations-modal>
+      }
+
+      <!-- COMPANY DRILLDOWN MODAL (Click Bar) -->
+      @if (selectedCompanyMigrationName) {
+        <app-company-migrations-modal
+          [companyName]="selectedCompanyMigrationName"
+          [jobs]="selectedCompanyJobs"
+          (close)="closeCompanyMigrationModal()"
+          (jobSelect)="onMigrationJobSelected($event)"
+        ></app-company-migrations-modal>
+      }
+
+      <!-- RUN HISTORY / TELEMETRY MODAL -->
+      @if (selectedMigrationJob) {
+        <app-migration-history-modal
+          [job]="selectedMigrationJob"
+          [histories]="migrationHistories"
+          [isLoading]="isLoadingMigrationHistories"
+          (close)="closeMigrationHistoryModal()"
+        ></app-migration-history-modal>
+      }
+    </main>
+
+    <app-footer
+      [currentModule]="'migration'"
+      [migrationDashboardData]="migrationDashboardData"
+    ></app-footer>
+  }
 </div>

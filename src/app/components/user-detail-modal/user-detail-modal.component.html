@@ -1,0 +1,122 @@
+<div class="user-popup-overlay" (click)="onClose()">
+  <div class="user-popup" (click)="$event.stopPropagation()">
+    <!-- POPUP HEADER -->
+    <div class="user-popup-header">
+      <div class="user-header-left">
+        <div class="user-avatar">
+          {{ user?.name ? user!.name.charAt(0) : 'U' }}
+        </div>
+        <div>
+          <h2>{{ user?.name }}</h2>
+          <p>Client: {{ user?.client }}</p>
+        </div>
+      </div>
+
+      <!-- ACTION BUTTONS -->
+      <div class="popup-actions">
+        <button
+          type="button"
+          class="export-csv"
+          (click)="exportCSV()"
+        >
+          ↓ Export CSV
+        </button>
+
+        <button
+          type="button"
+          class="export-excel"
+          (click)="exportExcel()"
+        >
+          ▣ Export Excel
+        </button>
+
+        <button
+          type="button"
+          class="popup-close"
+          (click)="onClose()"
+          title="Close"
+        >
+          ×
+        </button>
+      </div>
+    </div>
+
+    <!-- POPUP BODY -->
+    <div class="popup-body">
+      <!-- SUMMARY STATS -->
+      <div class="popup-summary-grid">
+        <!-- TEMPLATES -->
+        <div class="popup-stat">
+          <div>
+            <span>Templates Authored</span>
+            <strong>{{ user?.templates ?? 0 }}</strong>
+          </div>
+          <div class="stat-icon template-stat-icon">⚒</div>
+        </div>
+
+        <!-- PRINT JOBS -->
+        <div class="popup-stat">
+          <div>
+            <span>Print Jobs Triggered</span>
+            <strong>{{ user?.printJobs ?? 0 }}</strong>
+          </div>
+          <div class="stat-icon print-stat-icon">🖨</div>
+        </div>
+
+        <!-- ACTIVITY -->
+        <div class="popup-stat">
+          <div>
+            <span>Activity Share</span>
+            <strong class="activity-value">{{ user?.percentage ?? 0 }}%</strong>
+          </div>
+          <div class="stat-icon activity-stat-icon">◉</div>
+        </div>
+      </div>
+
+      <!-- HOURLY ACTIVITY TIMELINE -->
+      <div class="popup-section">
+        <h3>HOURLY ACTIVITY TIMELINE</h3>
+        <div class="popup-chart-container">
+          <canvas #userDetailChartRef id="userDetailChart"></canvas>
+        </div>
+      </div>
+
+      <!-- SPECIFIC USAGE EVENTS -->
+      <div class="popup-section events-section">
+        <h3>SPECIFIC USAGE EVENTS HISTORY (JSONB)</h3>
+
+        <div class="events-table-wrapper">
+          <div class="events-table">
+            <!-- TABLE HEADER -->
+            <div class="events-row events-header">
+              <div>TIME</div>
+              <div>ACTION</div>
+              <div>EVENT DETAILS (JSONB)</div>
+            </div>
+
+            <!-- ROWS -->
+            @for (event of user?.usageEvents; track event.time) {
+              <div class="events-row">
+                <div class="event-time">
+                  {{ event.time }}
+                </div>
+                <div class="event-action">
+                  {{ event.action }}
+                </div>
+                <div class="event-json" [title]="event.eventDetails">
+                  {{ event.eventDetails }}
+                </div>
+              </div>
+            }
+
+            @if (!user?.usageEvents || user!.usageEvents!.length === 0) {
+              <div class="no-events">
+                No usage events recorded for this user.
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,101 @@
+<div class="user-popup-overlay" (click)="onClose()">
+  <div class="user-popup" (click)="$event.stopPropagation()">
+    <!-- HEADER -->
+    <div class="user-popup-header">
+      <div class="user-header-left">
+        <div class="user-avatar">
+          🏷️
+        </div>
+        <div>
+          <h2>{{ template?.name || 'Template Print Jobs' }}</h2>
+          <p>
+            Specs: {{ template?.paperSize }} ({{ template?.orientation }})
+            &nbsp; | &nbsp;
+            Total Print Executions: {{ labels.length }}
+          </p>
+        </div>
+      </div>
+
+      <div class="popup-actions">
+        <button type="button" class="popup-close" (click)="onClose()" title="Close">
+          ×
+        </button>
+      </div>
+    </div>
+
+    <!-- BODY -->
+    <div class="popup-body">
+      <div class="popup-section">
+        <h3>PRINTED LABELS / RUNTIME INSTANCES (CLICK USER TO VIEW FULL PROFILE)</h3>
+
+        @if (isLoading) {
+          <div class="loading-state">
+            Loading print jobs...
+          </div>
+        } @else {
+          <div class="table-container">
+            <div class="events-table">
+              <!-- HEADER -->
+              <div class="events-row events-header">
+                <div class="col-lbl">LABEL ID</div>
+                <div class="col-prod">PRODUCT</div>
+                <div class="col-host">HOST / TERMINAL</div>
+                <div class="col-status">STATUS</div>
+                <div class="col-date">PRINT DATE</div>
+                <div class="col-user">PRINTED BY (USER)</div>
+                <div class="col-company">COMPANY</div>
+              </div>
+
+              <!-- LABELS LIST -->
+              @for (lbl of labels; track lbl.id) {
+                <div class="events-row">
+                  <div class="col-lbl font-mono">
+                    {{ lbl.labelId }}
+                  </div>
+                  <div class="col-prod font-semibold">
+                    {{ lbl.product }}
+                  </div>
+                  <div class="col-host text-muted font-mono">
+                    🖥️ {{ lbl.hostName }}
+                  </div>
+                  <div class="col-status">
+                    @if (lbl.status === 1 || lbl.status === null) {
+                      <span class="badge-success">✓ Success</span>
+                    } @else if (lbl.status === 2) {
+                      <span class="badge-error" [title]="lbl.remarks || 'Print error'">✕ Failed</span>
+                    } @else {
+                      <span class="badge-pending">⏳ Queued</span>
+                    }
+                  </div>
+                  <div class="col-date text-muted">
+                    {{ formatDate(lbl.dateStamp) }}
+                  </div>
+                  <div class="col-user">
+                    <button
+                      type="button"
+                      class="user-link-btn"
+                      (click)="onSelectUser(lbl)"
+                      title="Click to view full user activity & details"
+                    >
+                      <span class="user-chip-avatar">{{ lbl.userName ? lbl.userName.charAt(0) : 'U' }}</span>
+                      <span class="user-chip-name">{{ lbl.userName }}</span>
+                    </button>
+                  </div>
+                  <div class="col-company">
+                    <span class="company-badge">🏢 {{ lbl.companyName }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+          @if (labels.length === 0) {
+            <div class="no-data">
+              No print jobs recorded for this template yet.
+            </div>
+          }
+        }
+      </div>
+    </div>
+  </div>
+</div>
